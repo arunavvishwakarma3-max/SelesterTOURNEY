@@ -76,6 +76,14 @@ class TournamentBot(commands.Bot):
         utility_commands.set_start_time()
 
         print(f"Logged in as {self.user.name} ({self.user.id})")
+
+        # Set custom status
+        await self.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.playing,
+                name=f"Made with ❤️ • {len(self.guilds)} servers"
+            )
+        )
         
         # Try to sync slash commands
         try:
