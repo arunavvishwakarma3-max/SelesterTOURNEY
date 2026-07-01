@@ -664,6 +664,71 @@ class TournamentGroup(app_commands.Group):
         database.delete_tournament(t_data['id'])
         await interaction.followup.send("🚨 **Active tournament has been wiped from database.**", ephemeral=True)
 
+    @app_commands.command(name="refresh", description="Re-post all system embeds with the new look.")
+    @is_admin_or_staff()
+    async def refresh_embeds(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+        guild = interaction.guild
+        config = database.get_guild_config(guild.id)
+        config_v3 = database.get_guild_config_v3(guild.id)
+
+        refreshed = []
+
+        # Refresh tournament hub
+        t_data = database.get_active_tournament(guild.id)
+        if t_data and config:
+            await views.update_main_embed(guild, t_data)
+            refreshed.append("Tournament Hub")
+
+        # Refresh tier portal
+        if config_v3 and config_v3.get('tier_channel_id'):
+            chan = guild.get_channel(config_v3['tier_channel_id'])
+            if chan:
+                await chan.purge(limit=10)
+                embed = embeds.tier_test_hub_embed()
+                await chan.send(embed=embed, view=views.TierGamemodeSelect())
+                if config_v3.get('tier_queue_channel_id'):
+                    qchan = guild.get_channel(config_v3['tier_queue_channel_id'])
+                    if qchan:
+                        await qchan.purge(limit=10)
+                        qembed = embeds.tier_queue_main_embed(guild)
+                        await qchan.send(embed=qembed, view=views.TierQueueView())
+                refreshed.append("Tier Portal")
+
+        # Refresh ranked hub
+        if config_v3 and config_v3.get('ranked_queue_channel_id'):
+            chan = guild.get_channel(config_v3['ranked_queue_channel_id'])
+            if chan:
+                await chan.purge(limit=10)
+                embed = embeds.ranked_hub_embed("Skywars", 0)
+                await chan.send(embed=embed, view=views.RankedGamemodeSelect())
+                refreshed.append("Ranked Hub")
+
+        # Refresh ticket panel
+        if config_v3 and config_v3.get('ticket_category_id'):
+            tc = database.get_guild_config_v3(guild.id)
+            # find the ticket panel channel (usually bot-config or a dedicated channel)
+            if config and config.get('bot_config_channel_id'):
+                chan = guild.get_channel(config['bot_config_channel_id'])
+                if chan:
+                    await chan.purge(limit=10)
+                    embed = embeds.ticket_panel_embed()
+                    await chan.send(embed=embed, view=ticket_system.TicketPanelView())
+                    refreshed.append("Ticket Panel")
+
+        # Refresh comp panel
+        comp_cfg = database.get_comp_config(guild.id)
+        if comp_cfg and comp_cfg.get('channel_id'):
+            chan = guild.get_channel(comp_cfg['channel_id'])
+            if chan:
+                await chan.purge(limit=10)
+                embed = discord.Embed(title="⚔️ Competitive 1v1", description="Challenge other players!", color=embeds.COLOR_PURPLE)
+                await chan.send(embed=embed, view=comp_system.CompPanelView())
+                refreshed.append("Comp Panel")
+
+        msg = "✅ Refreshed: " + ", ".join(refreshed) if refreshed else "No system embeds found to refresh."
+        await interaction.followup.send(msg, ephemeral=True)
+
     @app_commands.command(name="setstage", description="Manually override the current stage.")
     @is_admin_or_staff()
     @app_commands.choices(
