@@ -192,7 +192,7 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
-        for col in ['ign', 'time', 'previous_tier']:
+        for col in ['ign', 'time', 'previous_tier', 'discord_tag']:
             try:
                 cursor.execute(f"ALTER TABLE tier_tickets ADD COLUMN {col} TEXT DEFAULT ''")
             except sqlite3.OperationalError:
@@ -729,15 +729,15 @@ def save_guild_config_v3(guild_id: int, data: dict):
 # V3: TIER TEST SYSTEM
 # =====================================================================
 
-def create_tier_ticket(guild_id: int, channel_id: int, user_id: int, gamemode: str, ign: str = '', time: str = ''):
+def create_tier_ticket(guild_id: int, channel_id: int, user_id: int, gamemode: str, ign: str = '', time: str = '', discord_tag: str = ''):
     previous = get_tier_results_for_user(guild_id, user_id)
     prev_tier = previous[0]['new_tier'] if previous else None
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO tier_tickets (guild_id, channel_id, user_id, gamemode, ign, time, previous_tier, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'open')
-        """, (guild_id, channel_id, user_id, gamemode, ign, time, prev_tier))
+            INSERT INTO tier_tickets (guild_id, channel_id, user_id, gamemode, ign, time, previous_tier, discord_tag, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open')
+        """, (guild_id, channel_id, user_id, gamemode, ign, time, prev_tier, discord_tag))
         conn.commit()
         return cursor.lastrowid
 
@@ -761,15 +761,16 @@ def close_tier_ticket(ticket_id: int):
         conn.execute("UPDATE tier_tickets SET status = 'closed' WHERE id = ?", (ticket_id,))
         conn.commit()
 
-def complete_tier_ticket(ticket_id: int, ign: str, new_tier: str, note: str, tester_id: int):
+def complete_tier_ticket(ticket_id: int, ign: str, new_tier: str, note: str, tester_id: int, previous_tier: str = None):
     with get_db() as conn:
         ticket = conn.execute("SELECT * FROM tier_tickets WHERE id = ?", (ticket_id,)).fetchone()
         if not ticket:
             return
+        prev = previous_tier if previous_tier is not None else ticket['previous_tier']
         conn.execute("""
             INSERT INTO tier_results (guild_id, user_id, ign, previous_tier, new_tier, gamemode, note, tester_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (ticket['guild_id'], ticket['user_id'], ign, ticket['previous_tier'], new_tier, ticket['gamemode'], note, tester_id))
+        """, (ticket['guild_id'], ticket['user_id'], ign, prev, new_tier, ticket['gamemode'], note, tester_id))
         conn.execute("UPDATE tier_tickets SET status = 'completed' WHERE id = ?", (ticket_id,))
         conn.commit()
 

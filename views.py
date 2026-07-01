@@ -609,6 +609,14 @@ class TierInfoModal(discord.ui.Modal):
         )
         self.add_item(self.time_input)
 
+        self.discord_tag_input = discord.ui.TextInput(
+            label="Discord Tag (optional)",
+            placeholder="e.g. username#0000 or just username",
+            max_length=50,
+            required=False
+        )
+        self.add_item(self.discord_tag_input)
+
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
 
@@ -650,9 +658,11 @@ class TierInfoModal(discord.ui.Modal):
             await interaction.followup.send(f"❌ Failed to create ticket: {e}", ephemeral=True)
             return
 
-        ticket_id = database.create_tier_ticket(interaction.guild_id, channel.id, interaction.user.id, self.gamemode, ign, time)
+        discord_tag = self.discord_tag_input.value.strip() if self.discord_tag_input.value else ''
 
-        embed = embeds.tier_ticket_embed(interaction.user.id, self.gamemode, ign, time)
+        ticket_id = database.create_tier_ticket(interaction.guild_id, channel.id, interaction.user.id, self.gamemode, ign, time, discord_tag)
+
+        embed = embeds.tier_ticket_embed(interaction.user.id, self.gamemode, ign, time, discord_tag)
         view = TierTicketView(ticket_id, interaction.user.id, self.gamemode, ign, time)
         await channel.send(
             f"<@{interaction.user.id}> | <@&{cfg['tier_staff_role_id']}>" if cfg['tier_staff_role_id'] else f"<@{interaction.user.id}>",
@@ -668,6 +678,9 @@ class TierResultModal(discord.ui.Modal):
         self.ticket_id = ticket_id
         self.gamemode = gamemode
 
+        ticket = database.get_tier_ticket_by_id(ticket_id)
+        prev_tier = (ticket or {}).get('previous_tier') or 'None'
+
         self.ign_input = discord.ui.TextInput(
             label="Player IGN",
             placeholder="Enter the player's IGN",
@@ -675,6 +688,14 @@ class TierResultModal(discord.ui.Modal):
             required=True
         )
         self.add_item(self.ign_input)
+
+        self.previous_tier_input = discord.ui.TextInput(
+            label="Previous Tier",
+            placeholder=f"Stored: {prev_tier}. Override if needed.",
+            max_length=10,
+            required=False
+        )
+        self.add_item(self.previous_tier_input)
 
         self.tier_input = discord.ui.TextInput(
             label="Tier Given",
@@ -700,21 +721,26 @@ class TierResultModal(discord.ui.Modal):
             return
 
         ign = self.ign_input.value.strip()
+        previous_tier = self.previous_tier_input.value.strip() or ticket.get('previous_tier')
         new_tier = self.tier_input.value.strip().upper()
         note = self.note_input.value.strip() or None
+
+        if previous_tier and previous_tier.lower() in ('none', 'null', ''):
+            previous_tier = None
 
         database.complete_tier_ticket(
             ticket_id=self.ticket_id,
             ign=ign,
             new_tier=new_tier,
             note=note,
-            tester_id=interaction.user.id
+            tester_id=interaction.user.id,
+            previous_tier=previous_tier
         )
 
         result = {
             'user_id': ticket['user_id'],
             'ign': ign,
-            'previous_tier': ticket.get('previous_tier'),
+            'previous_tier': previous_tier,
             'new_tier': new_tier,
             'gamemode': self.gamemode,
             'note': note,
@@ -793,7 +819,8 @@ class TierTicketView(discord.ui.View):
 
         database.claim_tier_ticket(self.ticket_id, interaction.user.id)
 
-        embed = embeds.tier_claim_embed(self.user_id, self.gamemode, self.ign, self.time, interaction.user.id)
+        discord_tag = ticket.get('discord_tag', '') or ''
+        embed = embeds.tier_claim_embed(self.user_id, self.gamemode, self.ign, self.time, interaction.user.id, discord_tag)
         await interaction.response.send_message(embed=embed)
 
         for b in self.children:

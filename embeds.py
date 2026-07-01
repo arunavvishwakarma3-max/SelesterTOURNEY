@@ -254,7 +254,7 @@ def tier_test_hub_embed(bot_avatar_url: str = None) -> discord.Embed:
     embed.set_footer(text="Celestia • Tier System")
     return embed
 
-def tier_ticket_embed(user_id: int, gamemode: str, ign: str, time: str) -> discord.Embed:
+def tier_ticket_embed(user_id: int, gamemode: str, ign: str, time: str, discord_tag: str = '') -> discord.Embed:
     embed = discord.Embed(
         title="🎟️ New Tier Test",
         description=f"<@{user_id}> requested a **{gamemode}** evaluation",
@@ -263,6 +263,8 @@ def tier_ticket_embed(user_id: int, gamemode: str, ign: str, time: str) -> disco
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
     embed.add_field(name="IGN", value=ign, inline=True)
     embed.add_field(name="Availability", value=time, inline=True)
+    if discord_tag:
+        embed.add_field(name="Discord", value=discord_tag, inline=True)
     embed.add_field(name="Status", value="Unclaimed", inline=True)
     embed.add_field(
         name="Actions",
@@ -272,7 +274,7 @@ def tier_ticket_embed(user_id: int, gamemode: str, ign: str, time: str) -> disco
     embed.set_footer(text="Celestia • Tier Ticket")
     return embed
 
-def tier_claim_embed(user_id: int, gamemode: str, ign: str, time: str, claimed_by: int) -> discord.Embed:
+def tier_claim_embed(user_id: int, gamemode: str, ign: str, time: str, claimed_by: int, discord_tag: str = '') -> discord.Embed:
     embed = discord.Embed(
         title="✋ Request Claimed",
         description=f"<@{claimed_by}> is handling the **{gamemode}** evaluation for <@{user_id}>.",
@@ -281,6 +283,8 @@ def tier_claim_embed(user_id: int, gamemode: str, ign: str, time: str, claimed_b
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
     embed.add_field(name="IGN", value=ign, inline=True)
     embed.add_field(name="Availability", value=time, inline=True)
+    if discord_tag:
+        embed.add_field(name="Discord", value=discord_tag, inline=True)
     embed.set_footer(text="Celestia • Evaluation in progress")
     return embed
 
