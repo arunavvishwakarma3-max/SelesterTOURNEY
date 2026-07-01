@@ -686,13 +686,16 @@ class TournamentGroup(app_commands.Group):
             if chan:
                 await chan.purge(limit=10)
                 embed = embeds.tier_test_hub_embed()
-                await chan.send(embed=embed, view=views.TierGamemodeSelect())
+                msg = await chan.send(embed=embed, view=views.TierGamemodeSelect())
+                update = {"tier_message_id": str(msg.id)}
                 if config_v3.get('tier_queue_channel_id'):
                     qchan = guild.get_channel(config_v3['tier_queue_channel_id'])
                     if qchan:
                         await qchan.purge(limit=10)
                         qembed = embeds.tier_queue_main_embed(guild)
-                        await qchan.send(embed=qembed, view=views.TierQueueView())
+                        qmsg = await qchan.send(embed=qembed, view=views.TierQueueView())
+                        update["tier_queue_message_id"] = qmsg.id
+                database.save_guild_config_v3(guild.id, update)
                 refreshed.append("Tier Portal")
 
         # Refresh ranked hub
