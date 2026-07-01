@@ -291,8 +291,12 @@ def tier_history_embed(results: list) -> discord.Embed:
     )
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
     for r in results:
+        gm = r.get('gamemode', '')
+        label = f"{r['ign']} — {r['previous_tier']} ➜ {r['new_tier']}"
+        if gm:
+            label += f" ({gm})"
         embed.add_field(
-            name=f"{r['ign']} — {r['previous_tier']} ➜ {r['new_tier']}",
+            name=label,
             value=f"Player: <@{r['user_id']}> • Tester: <@{r['tester_id']}>",
             inline=False
         )
@@ -355,12 +359,13 @@ def tier_result_embed(result: dict) -> discord.Embed:
         color=COLOR_RESULT
     )
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    embed.add_field(name="🎮 Gamemode", value=result.get('gamemode', 'N/A'), inline=True)
     embed.add_field(name="👤 Player", value=f"<@{result['user_id']}>", inline=True)
     embed.add_field(name="🎮 IGN", value=result['ign'], inline=True)
     embed.add_field(name="Previous Tier", value=result['previous_tier'] or "None", inline=True)
     embed.add_field(name="➡️ New Tier", value=f"**{result['new_tier']}**", inline=True)
-    embed.add_field(name="📝 Note", value=result['note'] or "No note", inline=False)
     embed.add_field(name="👨‍⚖️ Tester", value=f"<@{result['tester_id']}>", inline=True)
+    embed.add_field(name="📝 Note", value=result['note'] or "No note", inline=False)
     embed.set_footer(text="Selester V3 • Tier System")
     return embed
 

@@ -180,6 +180,7 @@ class TierGroup(app_commands.Group):
         ign="The player's in-game name",
         previous_tier="Their tier before the test",
         new_tier="Their tier after the test",
+        gamemode="The gamemode tested",
         note="Optional note from tester"
     )
     async def result(
@@ -189,6 +190,7 @@ class TierGroup(app_commands.Group):
         ign: str,
         previous_tier: str,
         new_tier: str,
+        gamemode: str = None,
         note: str = None
     ):
         await interaction.response.defer(ephemeral=True)
@@ -199,6 +201,7 @@ class TierGroup(app_commands.Group):
             ign=ign,
             previous_tier=previous_tier,
             new_tier=new_tier,
+            gamemode=gamemode or '',
             note=note or "No note",
             tester_id=interaction.user.id
         )
@@ -208,6 +211,7 @@ class TierGroup(app_commands.Group):
             "ign": ign,
             "previous_tier": previous_tier,
             "new_tier": new_tier,
+            "gamemode": gamemode or '',
             "note": note or "No note",
             "tester_id": interaction.user.id
         }

@@ -207,11 +207,16 @@ def init_db():
             ign TEXT,
             previous_tier TEXT,
             new_tier TEXT,
+            gamemode TEXT DEFAULT '',
             note TEXT,
             tester_id INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
+        try:
+            cursor.execute("ALTER TABLE tier_results ADD COLUMN gamemode TEXT DEFAULT ''")
+        except sqlite3.OperationalError:
+            pass
 
         # 10. Ranked Queue
         cursor.execute("""
@@ -762,18 +767,18 @@ def complete_tier_ticket(ticket_id: int, ign: str, new_tier: str, note: str, tes
         if not ticket:
             return
         conn.execute("""
-            INSERT INTO tier_results (guild_id, user_id, ign, previous_tier, new_tier, note, tester_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (ticket['guild_id'], ticket['user_id'], ign, ticket['previous_tier'], new_tier, note, tester_id))
+            INSERT INTO tier_results (guild_id, user_id, ign, previous_tier, new_tier, gamemode, note, tester_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (ticket['guild_id'], ticket['user_id'], ign, ticket['previous_tier'], new_tier, ticket['gamemode'], note, tester_id))
         conn.execute("UPDATE tier_tickets SET status = 'completed' WHERE id = ?", (ticket_id,))
         conn.commit()
 
-def save_tier_result(guild_id: int, user_id: int, ign: str, previous_tier: str, new_tier: str, note: str, tester_id: int):
+def save_tier_result(guild_id: int, user_id: int, ign: str, previous_tier: str, new_tier: str, note: str, tester_id: int, gamemode: str = ''):
     with get_db() as conn:
         conn.execute("""
-            INSERT INTO tier_results (guild_id, user_id, ign, previous_tier, new_tier, note, tester_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (guild_id, user_id, ign, previous_tier, new_tier, note, tester_id))
+            INSERT INTO tier_results (guild_id, user_id, ign, previous_tier, new_tier, gamemode, note, tester_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (guild_id, user_id, ign, previous_tier, new_tier, gamemode, note, tester_id))
         conn.commit()
 
 def get_tier_results(guild_id: int, limit: int = 10):

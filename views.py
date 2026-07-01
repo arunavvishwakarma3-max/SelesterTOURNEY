@@ -666,6 +666,7 @@ class TierResultModal(discord.ui.Modal):
     def __init__(self, ticket_id: int, gamemode: str):
         super().__init__(title=f"Result — {gamemode}")
         self.ticket_id = ticket_id
+        self.gamemode = gamemode
 
         self.ign_input = discord.ui.TextInput(
             label="Player IGN",
@@ -715,6 +716,7 @@ class TierResultModal(discord.ui.Modal):
             'ign': ign,
             'previous_tier': ticket.get('previous_tier'),
             'new_tier': new_tier,
+            'gamemode': self.gamemode,
             'note': note,
             'tester_id': interaction.user.id
         }
