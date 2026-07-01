@@ -729,6 +729,29 @@ class TournamentGroup(app_commands.Group):
                 await chan.send(embed=embed, view=comp_system.CompPanelView())
                 refreshed.append("Comp Panel")
 
+        # Refresh rules panel
+        if config_v3 and config_v3.get('rules_channel_id'):
+            chan = guild.get_channel(config_v3['rules_channel_id'])
+            if chan:
+                await chan.purge(limit=10)
+                await chan.send(embed=embeds.rules_embed(guild))
+                refreshed.append("Rules Panel")
+
+        # Refresh welcome portal (standing welcome banner, not per-member)
+        if config_v3 and config_v3.get('welcome_channel_id'):
+            chan = guild.get_channel(config_v3['welcome_channel_id'])
+            if chan:
+                await chan.purge(limit=10)
+                embed = discord.Embed(
+                    title="👋 Welcome to Celestia!",
+                    description="New members are welcomed here. Use `/welcome test` to preview the join message.",
+                    color=embeds.COLOR_INFO
+                )
+                embed.set_thumbnail(url=interaction.client.user.display_avatar.url if interaction.client.user else None)
+                embed.set_footer(text="Celestia • Welcome System")
+                await chan.send(embed=embed)
+                refreshed.append("Welcome Portal")
+
         msg = "✅ Refreshed: " + ", ".join(refreshed) if refreshed else "No system embeds found to refresh."
         await interaction.followup.send(msg, ephemeral=True)
 

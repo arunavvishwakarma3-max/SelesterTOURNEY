@@ -337,6 +337,9 @@ class ServerGroup(app_commands.Group):
         embed = embeds.rules_embed(interaction.guild)
 
         await target.send(embed=embed)
+        cfg = database.get_guild_config_v3(interaction.guild_id) or {}
+        cfg['rules_channel_id'] = target.id
+        database.save_guild_config_v3(interaction.guild_id, cfg)
         await interaction.followup.send(f"✅ Rules posted in {target.mention}!", ephemeral=True)
 
     @app_commands.command(name="setname", description="Change the bot's username.")
