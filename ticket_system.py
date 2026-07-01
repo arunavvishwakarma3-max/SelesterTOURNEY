@@ -41,7 +41,7 @@ class TicketGroup(app_commands.Group):
             ),
             color=embeds.COLOR_GREEN
         )
-        success_embed.set_footer(text="SELESTER V3 • Ticket System Online")
+        success_embed.set_footer(text="Celestia • Ticket System Online")
         await interaction.followup.send(embed=success_embed, ephemeral=True)
 
     @app_commands.command(name="panel", description="Post the ticket creation panel.")
@@ -172,7 +172,7 @@ class TicketPanelView(discord.ui.View):
         )
         embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
         embed.add_field(name="📝 Instructions", value="Please describe your issue in detail while you wait.", inline=False)
-        embed.set_footer(text="SELESTER V3 • Support Ticket")
+        embed.set_footer(text="Celestia • Support Ticket")
         view = TicketControlView(ticket_id)
         await channel.send(f"{interaction.user.mention} | <@&{cfg['ticket_support_role_id']}>" if cfg.get('ticket_support_role_id') else f"{interaction.user.mention}", embed=embed, view=view)
         await interaction.followup.send(f"✅ Ticket created! Check {channel.mention}", ephemeral=True)

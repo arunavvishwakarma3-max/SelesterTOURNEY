@@ -98,7 +98,7 @@ def _np_embed(track: wavelink.tracks.Playable, player: wavelink.Player) -> disco
         f"{prog_bar(pos, dur)}\n"
         f"`{fmt_dur(pos)}` ─ `{fmt_dur(dur)}` {loop_emoji}"
     )
-    embed.set_footer(text="SELESTER V3 • Lavalink Powered", icon_url="https://i.imgur.com/g8o468o.png")
+    embed.set_footer(text="Celestia • Lavalink Powered", icon_url="https://i.imgur.com/g8o468o.png")
     return embed
 
 class MusicControlView(discord.ui.View):
@@ -210,7 +210,7 @@ class MusicGroup(app_commands.Group):
             ),
             color=COLOR_NOW
         )
-        embed.set_footer(text="SELESTER V3 • Music System")
+        embed.set_footer(text="Celestia • Music System")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="playmusic", description="Search and play a song from YouTube.")

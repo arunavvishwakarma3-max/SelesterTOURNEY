@@ -140,5 +140,5 @@ class ApplyGroup(app_commands.Group):
             ),
             color=embeds.COLOR_GREEN
         )
-        embed.set_footer(text="SELESTER V3 • Staff Applications")
+        embed.set_footer(text="Celestia • Staff Applications")
         await interaction.followup.send(embed=embed, ephemeral=True)

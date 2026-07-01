@@ -47,7 +47,7 @@ def run_lifecycle_simulation():
     # 3. Create Tournament
     t_id = database.create_tournament(
         guild_id=guild_id,
-        name="Selester BUHC Open Cup",
+        name="Celestia BUHC Open Cup",
         mode="BUHC",
         format_str="Doubles (2v2)",
         type_str="Single Elimination",
@@ -56,7 +56,7 @@ def run_lifecycle_simulation():
         max_teams=4,
         rules="No hacking, respect rules."
     )
-    print(f"🟢 Created Tournament: 'Selester BUHC Open Cup' (ID: {t_id})")
+    print(f"🟢 Created Tournament: 'Celestia BUHC Open Cup' (ID: {t_id})")
     
     # 4. Register 4 Teams (Captains: 1001, 1002, 1003, 1004. Player 2s: 2001, 2002, 2003, 2004)
     team_data = [

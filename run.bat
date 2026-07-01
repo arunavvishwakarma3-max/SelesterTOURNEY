@@ -1,7 +1,7 @@
 @echo off
-title SELESTER TOURNEY BOT V3 Launcher
+title CELESTIA BOT Launcher
 echo ==================================================
-echo   SELESTER TOURNEY BOT V3 - LAUNCHER
+echo   CELESTIA BOT - LAUNCHER
 echo ==================================================
 echo.
 echo [1/2] Checking and installing Python dependencies...

@@ -67,7 +67,7 @@ class SuggestionGroup(app_commands.Group):
             ),
             color=embeds.COLOR_GREEN
         )
-        embed.set_footer(text="SELESTER V3 • Suggestions System Online")
+        embed.set_footer(text="Celestia • Suggestions System Online")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="submit", description="Submit a suggestion (opens modal).")

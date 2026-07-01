@@ -112,7 +112,7 @@ class TierGroup(app_commands.Group):
             color=embeds.COLOR_INFO
         )
         embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
-        embed.set_footer(text="Selester V3")
+        embed.set_footer(text="Celestia")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="roles", description="List all tier-to-role mappings.")
@@ -129,7 +129,7 @@ class TierGroup(app_commands.Group):
         if not results:
             embed = discord.Embed(title="📋 Recent Evaluations", description="No results recorded yet.", color=embeds.COLOR_INFO)
             embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
-            embed.set_footer(text="Selester V3")
+            embed.set_footer(text="Celestia")
             await interaction.followup.send(embed=embed, ephemeral=True)
             return
         embed = embeds.tier_history_embed(results)

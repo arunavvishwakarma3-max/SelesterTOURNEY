@@ -73,7 +73,7 @@ def tournament_hub_embed(tournament: dict, teams: list) -> discord.Embed:
             value += f"\n*+{len(lines)-20} more*"
         embed.add_field(name=f"👥 Teams ({len(teams)})", value=value, inline=False)
 
-    embed.set_footer(text="Selester V3 • Esports System")
+    embed.set_footer(text="Celestia • Esports System")
     return embed
 
 def bracket_embed(tournament: dict, matches: list, teams: list) -> discord.Embed:
@@ -133,7 +133,7 @@ def standings_embed(tournament: dict, teams: list) -> discord.Embed:
         lines.append(f"{medal} **{t['name']}** — {t['wins']}W / {t['losses']}L — `{t['points']}pts`")
     embed.description = "\n".join(lines)
 
-    embed.set_footer(text="Selester V3 • Updated live")
+    embed.set_footer(text="Celestia • Updated live")
     return embed
 
 def match_room_embed(match: dict, t1: dict, t2: dict) -> discord.Embed:
@@ -169,7 +169,7 @@ def player_stats_embed(player_id: int, stats: dict) -> discord.Embed:
     embed.add_field(name="📈 Win Rate", value=f"{rate:.1f}%", inline=True)
     embed.add_field(name="⭐ Season Points", value=f"**{stats['season_points']}**", inline=False)
 
-    embed.set_footer(text="Selester V3 • Stats Portal")
+    embed.set_footer(text="Celestia • Stats Portal")
     return embed
 
 def champion_embed(tournament: dict, team: dict, runner_up: dict = None) -> discord.Embed:
@@ -193,7 +193,7 @@ def champion_embed(tournament: dict, team: dict, runner_up: dict = None) -> disc
     embed.add_field(name="👥 Format", value=tournament['format'], inline=True)
 
     embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
-    embed.set_footer(text="Selester V3 • Hall of Fame")
+    embed.set_footer(text="Celestia • Hall of Fame")
     return embed
 
 def history_embed(history_records: list) -> discord.Embed:
@@ -218,7 +218,7 @@ def history_embed(history_records: list) -> discord.Embed:
             inline=False
         )
 
-    embed.set_footer(text="Selester V3 • History")
+    embed.set_footer(text="Celestia • History")
     return embed
 
 # =====================================================================
@@ -251,7 +251,7 @@ def tier_test_hub_embed() -> discord.Embed:
         inline=False
     )
     embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
-    embed.set_footer(text="Selester V3 • Tier System")
+    embed.set_footer(text="Celestia • Tier System")
     return embed
 
 def tier_ticket_embed(user_id: int, gamemode: str, ign: str, time: str) -> discord.Embed:
@@ -269,7 +269,7 @@ def tier_ticket_embed(user_id: int, gamemode: str, ign: str, time: str) -> disco
         value="• **Claim** — handle this request\n• **Result** — submit evaluation\n• **Close** — delete channel",
         inline=False
     )
-    embed.set_footer(text="Selester V3 • Tier Ticket")
+    embed.set_footer(text="Celestia • Tier Ticket")
     return embed
 
 def tier_claim_embed(user_id: int, gamemode: str, ign: str, time: str, claimed_by: int) -> discord.Embed:
@@ -281,7 +281,7 @@ def tier_claim_embed(user_id: int, gamemode: str, ign: str, time: str, claimed_b
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
     embed.add_field(name="IGN", value=ign, inline=True)
     embed.add_field(name="Availability", value=time, inline=True)
-    embed.set_footer(text="Selester V3 • Evaluation in progress")
+    embed.set_footer(text="Celestia • Evaluation in progress")
     return embed
 
 def tier_history_embed(results: list) -> discord.Embed:
@@ -300,7 +300,7 @@ def tier_history_embed(results: list) -> discord.Embed:
             value=f"Player: <@{r['user_id']}> • Tester: <@{r['tester_id']}>",
             inline=False
         )
-    embed.set_footer(text="Selester V3 • Latest results")
+    embed.set_footer(text="Celestia • Latest results")
     return embed
 
 def tier_role_embed(tier_name: str, role_mention: str) -> discord.Embed:
@@ -310,7 +310,7 @@ def tier_role_embed(tier_name: str, role_mention: str) -> discord.Embed:
         color=COLOR_SUCCESS
     )
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
-    embed.set_footer(text="Selester V3")
+    embed.set_footer(text="Celestia")
     return embed
 
 def tier_roles_list_embed(mapping: dict) -> discord.Embed:
@@ -321,7 +321,7 @@ def tier_roles_list_embed(mapping: dict) -> discord.Embed:
         color=COLOR_TIER
     )
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
-    embed.set_footer(text="Selester V3 • Use /tier setrole to add")
+    embed.set_footer(text="Celestia • Use /tier setrole to add")
     return embed
 
 def tiersetup_success_embed(tier_channel, results_channel, ticket_category, staff_role, tester_role=None) -> discord.Embed:
@@ -339,7 +339,7 @@ def tiersetup_success_embed(tier_channel, results_channel, ticket_category, staf
         color=COLOR_SUCCESS
     )
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
-    embed.set_footer(text="Selester V3 • Tier system configured")
+    embed.set_footer(text="Celestia • Tier system configured")
     return embed
 
 def tier_remove_embed() -> discord.Embed:
@@ -349,7 +349,7 @@ def tier_remove_embed() -> discord.Embed:
         color=COLOR_INFO
     )
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
-    embed.set_footer(text="Selester V3")
+    embed.set_footer(text="Celestia")
     return embed
 
 def tier_result_embed(result: dict) -> discord.Embed:
@@ -366,7 +366,7 @@ def tier_result_embed(result: dict) -> discord.Embed:
     embed.add_field(name="➡️ New Tier", value=f"**{result['new_tier']}**", inline=True)
     embed.add_field(name="👨‍⚖️ Tester", value=f"<@{result['tester_id']}>", inline=True)
     embed.add_field(name="📝 Note", value=result['note'] or "No note", inline=False)
-    embed.set_footer(text="Selester V3 • Tier System")
+    embed.set_footer(text="Celestia • Tier System")
     return embed
 
 # =====================================================================
@@ -393,7 +393,7 @@ def ranked_hub_embed(gamemode: str, queue_count: int) -> discord.Embed:
         value="Winner: **+10** | Loser: **+1**\nUse `/lb ranked` for leaderboard",
         inline=False
     )
-    embed.set_footer(text="Selester V3 • Ranked System")
+    embed.set_footer(text="Celestia • Ranked System")
     return embed
 
 def ranked_match_found_embed(match_id: int, player1_id: int, player2_id: int, gamemode: str) -> discord.Embed:
@@ -411,7 +411,7 @@ def ranked_match_found_embed(match_id: int, player1_id: int, player2_id: int, ga
         value="Both players click **Start Match** to begin!\nWinner: +10 pts | Loser: +1 pt",
         inline=False
     )
-    embed.set_footer(text="Selester V3 • GL HF!")
+    embed.set_footer(text="Celestia • GL HF!")
     return embed
 
 def ranked_leaderboard_embed(entries: list, gamemode: str = None) -> discord.Embed:
@@ -429,7 +429,7 @@ def ranked_leaderboard_embed(entries: list, gamemode: str = None) -> discord.Emb
         medal = ["🥇", "🥈", "🥉"][idx] if idx < 3 else f"#{idx+1:02d}"
         lines.append(f"{medal} <@{entry['user_id']}> — **{entry['points']}pts** (W:{entry['wins']} L:{entry['losses']})")
     embed.description = "\n".join(lines)
-    embed.set_footer(text="Selester V3 • Ranked System")
+    embed.set_footer(text="Celestia • Ranked System")
     return embed
 
 # =====================================================================
@@ -461,7 +461,7 @@ def welcome_embed(member: discord.Member, member_count: int) -> discord.Embed:
         inline=False
     )
     embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
-    embed.set_footer(text=f"Selester V3 • Member #{member_count}")
+    embed.set_footer(text=f"Celestia • Member #{member_count}")
     return embed
 
 def suggestion_embed(suggestion_id: int, author: discord.Member, content: str) -> discord.Embed:
@@ -473,7 +473,7 @@ def suggestion_embed(suggestion_id: int, author: discord.Member, content: str) -
     embed.set_author(name=author.display_name, icon_url=author.display_avatar.url)
     embed.add_field(name="Status", value="Pending Review", inline=True)
     embed.add_field(name="Vote", value="React ✅ to approve or ❌ to deny", inline=True)
-    embed.set_footer(text=f"Suggestion #{suggestion_id} • Selester V3")
+    embed.set_footer(text=f"Suggestion #{suggestion_id} • Celestia")
     return embed
 
 def ticket_panel_embed() -> discord.Embed:
@@ -493,7 +493,7 @@ def ticket_panel_embed() -> discord.Embed:
         ),
         inline=False
     )
-    embed.set_footer(text="Selester V3 • Support System")
+    embed.set_footer(text="Celestia • Support System")
     return embed
 
 def rules_embed(guild: discord.Guild) -> discord.Embed:
@@ -512,7 +512,7 @@ def rules_embed(guild: discord.Guild) -> discord.Embed:
     embed.add_field(name="7️⃣ No NSFW", value="Safe-for-work community only.", inline=False)
     embed.add_field(name="8️⃣ Have Fun!", value="Enjoy your time here and make friends!", inline=False)
     embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
-    embed.set_footer(text="Selester V3 • Server Rules")
+    embed.set_footer(text="Celestia • Server Rules")
     return embed
 
 def premium_announcement_embed(title: str, message: str, color: int = COLOR_PURPLE) -> discord.Embed:
@@ -521,7 +521,7 @@ def premium_announcement_embed(title: str, message: str, color: int = COLOR_PURP
         description=message,
         color=color
     )
-    embed.set_footer(text="Selester V3 • Announcement")
+    embed.set_footer(text="Celestia • Announcement")
     return embed
 
 # =====================================================================
@@ -556,7 +556,7 @@ def tier_queue_main_embed(guild: discord.Guild) -> discord.Embed:
         inline=False
     )
     embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
-    embed.set_footer(text="Selester V3 • Tier Queue")
+    embed.set_footer(text="Celestia • Tier Queue")
     return embed
 
 def tier_gamemode_queue_embed(guild: discord.Guild, gamemode: str) -> discord.Embed:
@@ -578,5 +578,5 @@ def tier_gamemode_queue_embed(guild: discord.Guild, gamemode: str) -> discord.Em
     else:
         embed.description = "No open tickets for this gamemode."
 
-    embed.set_footer(text="Selester V3 • Tier Queue")
+    embed.set_footer(text="Celestia • Tier Queue")
     return embed

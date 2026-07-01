@@ -81,7 +81,7 @@ class TournamentBot(commands.Bot):
         await self.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.playing,
-                name=f"🌟 Selester • {len(self.guilds)} servers"
+                name=f"🌟 Celestia • {len(self.guilds)} servers"
             )
         )
         
@@ -145,7 +145,7 @@ class TournamentBot(commands.Bot):
                 value="Admins/Owners can use **`/help`** to see every command.",
                 inline=False
             )
-            embed.set_footer(text="SELESTER V3 • SelesterUHC Bot")
+            embed.set_footer(text="Celestia • Bot Info")
             await message.channel.send(embed=embed)
 
 bot = TournamentBot()

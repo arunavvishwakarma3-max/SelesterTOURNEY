@@ -17,7 +17,7 @@ async def help_callback(interaction: discord.Interaction):
         return
 
     embed = discord.Embed(
-        title="📚 SELESTER BOT — COMMAND LIST",
+        title="📚 Celestia — Command List",
         description=(
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "**Complete command reference**\n"
@@ -116,5 +116,5 @@ async def help_callback(interaction: discord.Interaction):
         inline=False
     )
 
-    embed.set_footer(text="SELESTER V3 • SelecterUHC Bot — Made by Anomaly")
+    embed.set_footer(text="Celestia • Help & Commands")
     await interaction.response.send_message(embed=embed, ephemeral=True)

@@ -60,7 +60,7 @@ class RankedGroup(app_commands.Group):
             inline=False
         )
         embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
-        embed.set_footer(text="SELESTER V3 • Ranked Competitive System")
+        embed.set_footer(text="Celestia • Ranked Competitive System")
         view = views.RankedGamemodeSelect()
         await queue_channel.send(embed=embed, view=view)
 
@@ -77,7 +77,7 @@ class RankedGroup(app_commands.Group):
             ),
             color=embeds.COLOR_GREEN
         )
-        success_embed.set_footer(text="SELESTER V3 • Ranked System Online")
+        success_embed.set_footer(text="Celestia • Ranked System Online")
         await interaction.followup.send(embed=success_embed, ephemeral=True)
 
     @app_commands.command(name="stats", description="Check your ranked stats.")

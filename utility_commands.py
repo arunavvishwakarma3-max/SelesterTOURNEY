@@ -23,7 +23,7 @@ class UtilityGroup(app_commands.Group):
             description=f"**Latency:** `{latency}ms`\n**Websocket:** `{latency}ms`",
             color=embeds.COLOR_GREEN
         )
-        embed.set_footer(text="SELESTER V3 • Utility")
+        embed.set_footer(text="Celestia • Utility")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="uptime", description="Show how long the bot has been online.")
@@ -40,7 +40,7 @@ class UtilityGroup(app_commands.Group):
             description=f"`{days}d {hours}h {minutes}m {seconds}s`",
             color=embeds.COLOR_BLUE
         )
-        embed.set_footer(text="SELESTER V3 • Utility")
+        embed.set_footer(text="Celestia • Utility")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="avatar", description="Get a user's avatar.")
@@ -90,7 +90,7 @@ class UtilityGroup(app_commands.Group):
         embed.add_field(name="**Joined**", value=f"`{joined}`", inline=True)
         embed.add_field(name="**Top Role**", value=member.top_role.mention, inline=True)
         embed.add_field(name=f"**Roles ({len(roles)})**", value=" ".join(roles[:10]) or "None", inline=False)
-        embed.set_footer(text=f"SELESTER V3 • User Info")
+        embed.set_footer(text=f"Celestia • User Info")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="serverinfo", description="View detailed server information.")
@@ -120,7 +120,7 @@ class UtilityGroup(app_commands.Group):
         embed.add_field(name="**Roles**", value=f"`{len(guild.roles)}`", inline=True)
         embed.add_field(name="**Boosts**", value=f"`Level {boost_level}` ({boost_count} boosts)", inline=True)
         embed.add_field(name="**Emojis**", value=f"`{len(guild.emojis)}`", inline=True)
-        embed.set_footer(text="SELESTER V3 • Server Info")
+        embed.set_footer(text="Celestia • Server Info")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="roleinfo", description="View information about a role.")
@@ -141,7 +141,7 @@ class UtilityGroup(app_commands.Group):
         embed.add_field(name="**Members**", value=f"`{len(role.members)}`", inline=True)
         embed.add_field(name="**Created**", value=f"`{created}`", inline=True)
         embed.add_field(name="**Key Permissions**", value=perms, inline=False)
-        embed.set_footer(text="SELESTER V3 • Role Info")
+        embed.set_footer(text="Celestia • Role Info")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="channelinfo", description="View information about a channel.")
@@ -161,7 +161,7 @@ class UtilityGroup(app_commands.Group):
         embed.add_field(name="**NSFW**", value="Yes" if channel.nsfw else "No", inline=True)
         embed.add_field(name="**Created**", value=f"`{created}`", inline=True)
         embed.add_field(name="**Position**", value=f"`{channel.position}`", inline=True)
-        embed.set_footer(text="SELESTER V3 • Channel Info")
+        embed.set_footer(text="Celestia • Channel Info")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="botinfo", description="View bot information and stats.")
@@ -173,7 +173,7 @@ class UtilityGroup(app_commands.Group):
         commands_count = len(bot.tree._global_commands)
 
         embed = discord.Embed(
-            title="🤖 SELESTER V3",
+            title="🤖 Celestia",
             description="**The ultimate tournament & server management bot.**",
             color=embeds.COLOR_PURPLE
         )
@@ -187,7 +187,7 @@ class UtilityGroup(app_commands.Group):
         if bot_start_time:
             delta = datetime.datetime.utcnow() - bot_start_time
             embed.add_field(name="**Uptime**", value=f"`{delta.days}d {delta.seconds//3600}h`", inline=True)
-        embed.set_footer(text="Made for MCPE HUB • SELESTER V3")
+        embed.set_footer(text="Celestia • Bot Info")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="membercount", description="View the server member count breakdown.")
@@ -205,7 +205,7 @@ class UtilityGroup(app_commands.Group):
         embed.add_field(name="**Humans**", value=f"`{humans}`", inline=True)
         embed.add_field(name="**Bots**", value=f"`{bots}`", inline=True)
         embed.add_field(name="**Online**", value=f"`{online}`", inline=True)
-        embed.set_footer(text="SELESTER V3 • Member Count")
+        embed.set_footer(text="Celestia • Member Count")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="roles", description="List all roles in the server.")
@@ -244,7 +244,7 @@ class UtilityGroup(app_commands.Group):
     @app_commands.command(name="invite", description="Get the bot's invite link.")
     async def invite(self, interaction: discord.Interaction):
         embed = discord.Embed(
-            title="🔗 Invite Selester V3",
+            title="🔗 Invite Celestia",
             description="Click [**here**](https://discord.com/api/oauth2/authorize?client_id={}) to add me to your server!".format(
                 interaction.client.user.id if interaction.client.user else ""
             ),
@@ -252,10 +252,10 @@ class UtilityGroup(app_commands.Group):
         )
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="website", description="Visit the SelesterUHC website.")
+    @app_commands.command(name="website", description="Visit the Celestia website.")
     async def website(self, interaction: discord.Interaction):
         embed = discord.Embed(
-            title="🌐 SELESTERUHC WEBSITE",
+            title="🌐 Celestia WEBSITE",
             description=(
                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                 "Full bot info, commands & tier system\n"
@@ -274,7 +274,7 @@ class UtilityGroup(app_commands.Group):
             value="▸ `Commands` — All 100+ slash commands\n▸ `Tiers` — HT1 to Below Avg explained\n▸ `FAQ` — Common questions answered",
             inline=False
         )
-        embed.set_footer(text="SELESTER V3 • SelesterUHC Bot • Made by Arunav")
+        embed.set_footer(text="Celestia • Bot Info")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="read", description="Fetch and display a webpage's text content.")

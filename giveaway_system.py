@@ -32,7 +32,7 @@ class GiveawayGroup(app_commands.Group):
             ),
             color=embeds.COLOR_GREEN
         )
-        embed.set_footer(text="SELESTER V3 • Giveaway System Online")
+        embed.set_footer(text="Celestia • Giveaway System Online")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="start", description="Start a giveaway.")
@@ -73,7 +73,7 @@ class GiveawayGroup(app_commands.Group):
         embed.add_field(name="👤 Hosted by", value=interaction.user.mention, inline=True)
         embed.add_field(name="🎯 How to Enter", value="React with 🎉 to enter the giveaway!", inline=False)
         embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
-        embed.set_footer(text=f"Click 🎉 to enter • Giveaway ID: {g_id} • SELESTER V3")
+        embed.set_footer(text=f"Click 🎉 to enter • Giveaway ID: {g_id} • Celestia")
         msg = await channel.send(content="🎉 **GIVEAWAY** 🎉", embed=embed)
         await msg.add_reaction("🎉")
 
@@ -116,7 +116,7 @@ class GiveawayGroup(app_commands.Group):
         )
         embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
         embed.add_field(name="👤 Hosted by", value=interaction.user.mention, inline=False)
-        embed.set_footer(text="SELESTER V3 • Giveaway System")
+        embed.set_footer(text="Celestia • Giveaway System")
         await msg.edit(content="🎉 **GIVEAWAY ENDED** 🎉", embed=embed)
         if selected:
             await channel.send(f"🎉 Congratulations {winner_mentions}! You won **{prize}**!")

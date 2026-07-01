@@ -276,7 +276,7 @@ class CompGroup(app_commands.Group):
             ),
             color=0xe74c3c
         )
-        embed.set_footer(text="SELESTER V3 • Comp System Online")
+        embed.set_footer(text="Celestia • Comp System Online")
 
         view = CompPanelView()
         msg = await channel.send(embed=embed, view=view)
@@ -311,7 +311,7 @@ class CompGroup(app_commands.Group):
             )
 
         embed.description = "\n\n".join(lines)
-        embed.set_footer(text="SELESTER V3 • Comp System")
+        embed.set_footer(text="Celestia • Comp System")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="stats", description="Show your or another player's comp stats.")

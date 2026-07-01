@@ -35,7 +35,7 @@ class AutoroleGroup(app_commands.Group):
             ),
             color=embeds.COLOR_GREEN
         )
-        embed.set_footer(text="SELESTER V3 • Auto-Role System")
+        embed.set_footer(text="Celestia • Auto-Role System")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="remove", description="Stop auto-assigning a role to new members.")
@@ -61,7 +61,7 @@ class AutoroleGroup(app_commands.Group):
             ),
             color=embeds.COLOR_AMBER
         )
-        embed.set_footer(text="SELESTER V3 • Auto-Role System")
+        embed.set_footer(text="Celestia • Auto-Role System")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="list", description="List all auto-roles for this server.")
@@ -91,7 +91,7 @@ class AutoroleGroup(app_commands.Group):
             description="━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" + "\n".join(lines) + "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━",
             color=embeds.COLOR_BLUE
         )
-        embed.set_footer(text="SELESTER V3 • Auto-Role System")
+        embed.set_footer(text="Celestia • Auto-Role System")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
 

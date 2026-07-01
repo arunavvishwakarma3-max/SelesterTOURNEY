@@ -33,7 +33,7 @@ class WelcomeGroup(app_commands.Group):
             ),
             color=embeds.COLOR_GREEN
         )
-        embed.set_footer(text="SELESTER V3 • Welcome System Online")
+        embed.set_footer(text="Celestia • Welcome System Online")
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="test", description="Test the welcome message.")
