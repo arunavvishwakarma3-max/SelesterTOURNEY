@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiers — SelesterUHC</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tier-showcase { display: flex; flex-direction: column; gap: 24px; }
+        .tier-row {
+            display: flex; align-items: center; gap: 24px;
+            background: rgba(255,255,255,0.03); border-radius: 16px;
+            padding: 28px 32px; border: 1px solid rgba(255,255,255,0.06);
+            transition: 0.3s;
+        }
+        .tier-row:hover { transform: translateX(8px); }
+        .tier-rank {
+            font-size: 36px; font-weight: 900; min-width: 100px; text-align: center;
+        }
+        .tier-info { flex: 1; }
+        .tier-info h3 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .tier-info p { color: rgba(255,255,255,0.5); font-size: 14px; line-height: 1.6; }
+        .tier-bar {
+            width: 100%; height: 10px; border-radius: 5px;
+            margin-top: 12px; background: rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        .tier-fill { height: 100%; border-radius: 5px; }
+        .tier-icon { font-size: 40px; }
+
+        .info-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 28px 32px; margin-top: 32px;
+        }
+        .info-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .info-card p, .info-card li {
+            color: rgba(255,255,255,0.55); font-size: 14px; line-height: 1.8;
+        }
+        .info-card ul { padding-left: 20px; }
+        .info-card li { margin-bottom: 4px; }
+
+        @media (max-width: 600px) {
+            .tier-row { flex-direction: column; text-align: center; }
+            .tier-rank { min-width: unset; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow2"></div>
+
+    <nav>
+        <div class="logo">✦ SelesterUHC</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="commands.html">Commands</a>
+            <a href="tiers.html" class="active">Tiers</a>
+            <a href="faq.html">FAQ</a>
+            <a class="btn-discord" href="#" id="discordLink" target="_blank">Join Discord</a>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>🎯 Tier Rankings</h1>
+        <p>Official MCPE PvP tier system — get evaluated and climb the ranks.</p>
+    </div>
+
+    <section>
+        <div class="tier-showcase">
+            <div class="tier-row">
+                <div class="tier-icon">👑</div>
+                <div class="tier-rank" style="color: #FFD700;">HT1</div>
+                <div class="tier-info">
+                    <h3>Hyper Tier 1 — Elite</h3>
+                    <p>The absolute top tier. Players in HT1 are the best of the best — godlike PvP mechanics, flawless game sense, and tournament winners. Less than 1% of players.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 5%; background: #FFD700;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">⭐</div>
+                <div class="tier-rank" style="color: #FFD700;">LT1</div>
+                <div class="tier-info">
+                    <h3>Low Tier 1 — Elite</h3>
+                    <p>Still elite level. Slightly below HT1 but can compete at the highest levels. Strong mechanical skill and game knowledge. Top 3% of players.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 8%; background: #FFD700;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">⚔️</div>
+                <div class="tier-rank" style="color: #FF6B6B;">HT2</div>
+                <div class="tier-info">
+                    <h3>Hyper Tier 2 — Advanced</h3>
+                    <p>Advanced players with excellent PvP skills. Can hold their own in most fights. Good understanding of strats and game mechanics. Top 15%.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 15%; background: #FF6B6B;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">🔥</div>
+                <div class="tier-rank" style="color: #FF6B6B;">LT2</div>
+                <div class="tier-info">
+                    <h3>Low Tier 2 — Advanced</h3>
+                    <p>Solid advanced players. Above-average mechanics and consistent performance. Still developing toward elite. Strong competitors.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 20%; background: #FF6B6B;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">💪</div>
+                <div class="tier-rank" style="color: #FF9F00;">HT3</div>
+                <div class="tier-info">
+                    <h3>Hyper Tier 3 — Intermediate</h3>
+                    <p>Intermediate players with decent PvP skills. Knows the basics well and improving. Can win fights but still inconsistent at times.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 30%; background: #FF9F00;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">⚡</div>
+                <div class="tier-rank" style="color: #FF9F00;">LT3</div>
+                <div class="tier-info">
+                    <h3>Low Tier 3 — Intermediate</h3>
+                    <p>Developing intermediate. Has the basics down but still learning advanced mechanics. Shows promise with practice.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 35%; background: #FF9F00;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">🌱</div>
+                <div class="tier-rank" style="color: #00D2FF;">HT4</div>
+                <div class="tier-info">
+                    <h3>Hyper Tier 4 — Rookie</h3>
+                    <p>Rookie level. Has basic understanding of PvP but lacks experience. Lots of room for growth — consistent practice will move you up.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 50%; background: #00D2FF;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">🌿</div>
+                <div class="tier-rank" style="color: #00D2FF;">LT4</div>
+                <div class="tier-info">
+                    <h3>Low Tier 4 — Rookie</h3>
+                    <p>Entry rookie. Still learning the basics of PvP. Everyone starts here — keep practicing and you'll climb the ranks!</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 55%; background: #00D2FF;"></div></div>
+                </div>
+            </div>
+
+            <div class="tier-row">
+                <div class="tier-icon">📈</div>
+                <div class="tier-rank" style="color: #95A5A6;">Below Avg</div>
+                <div class="tier-info">
+                    <h3>Below Average — Rising</h3>
+                    <p>New to MCPE PvP. Still developing fundamental skills. With dedication and practice, you'll reach the next tier in no time.</p>
+                    <div class="tier-bar"><div class="tier-fill" style="width: 70%; background: #95A5A6;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h3>📋 How Tier Testing Works</h3>
+            <ol>
+                <li><strong>Go to</strong> the <code>#tier-test</code> channel in the Discord server</li>
+                <li><strong>Select</strong> your gamemode (Skywars, BUHC, FUHC, Boxing, Midfight, Bedfight)</li>
+                <li><strong>A ticket</strong> is created — a staff member will claim it</li>
+                <li><strong>Play</strong> your evaluation match against the tester</li>
+                <li><strong>Staff</strong> submits the result using <code>/tier result</code></li>
+                <li><strong>Your tier</strong> is announced in <code>#tier-results</code></li>
+            </ol>
+            <p style="margin-top: 12px;">Results are final. Tests are conducted fairly by certified tier testers.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>SelesterUHC &mdash; Made with ❤️ for MCPE PvP &bull; &copy; 2026</p>
+    </footer>
+
+    <script>
+        document.getElementById('discordLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Set your Discord invite URL in the HTML!');
+        });
+    </script>
+</body>
+</html>

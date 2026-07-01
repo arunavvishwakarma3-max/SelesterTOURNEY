@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SelesterUHC — MCPE PvP Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(155, 89, 182, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(155, 89, 182, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px; z-index: -2;
+        }
+        .bg-glow {
+            position: fixed; top: -30%; left: -20%;
+            width: 80%; height: 80%;
+            background: radial-gradient(circle, rgba(155,89,182,0.15), transparent 70%);
+            z-index: -1; animation: float 8s ease-in-out infinite;
+        }
+        .bg-glow2 {
+            position: fixed; bottom: -30%; right: -20%;
+            width: 80%; height: 80%;
+            background: radial-gradient(circle, rgba(0,210,255,0.1), transparent 70%);
+            z-index: -1; animation: float2 10s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0,0); }
+            50% { transform: translate(60px,-40px); }
+        }
+        @keyframes float2 {
+            0%, 100% { transform: translate(0,0); }
+            50% { transform: translate(-50px,60px); }
+        }
+
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 60px; max-width: 1300px; margin: 0 auto;
+        }
+        .logo {
+            font-size: 24px; font-weight: 900;
+            background: linear-gradient(135deg, #9B59B6, #00D2FF);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a {
+            color: rgba(255,255,255,0.7); text-decoration: none;
+            font-size: 15px; font-weight: 500; transition: 0.3s;
+        }
+        .nav-links a:hover { color: #fff; }
+        .nav-links a.active { color: #9B59B6; }
+        .btn-discord {
+            background: #5865F2; color: #fff !important;
+            padding: 10px 24px; border-radius: 8px; font-weight: 600 !important;
+        }
+        .btn-discord:hover { background: #4752C4 !important; transform: scale(1.05); }
+
+        .hero {
+            text-align: center; padding: 100px 20px 80px;
+            max-width: 900px; margin: 0 auto;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(155,89,182,0.15);
+            border: 1px solid rgba(155,89,182,0.3);
+            color: #9B59B6; padding: 6px 18px; border-radius: 20px;
+            font-size: 13px; font-weight: 600; margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: 64px; font-weight: 900; line-height: 1.1;
+            background: linear-gradient(135deg, #fff 30%, #9B59B6, #00D2FF);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 18px; color: rgba(255,255,255,0.6);
+            max-width: 600px; margin: 24px auto 40px; line-height: 1.6;
+        }
+        .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary {
+            background: linear-gradient(135deg, #9B59B6, #8E44AD);
+            color: #fff; padding: 14px 36px; border-radius: 10px;
+            font-size: 16px; font-weight: 700; text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(155,89,182,0.4); }
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: #fff; padding: 14px 36px; border-radius: 10px;
+            font-size: 16px; font-weight: 600; text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.12); transition: 0.3s;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); }
+
+        .hero-stats {
+            display: flex; gap: 60px; justify-content: center; margin-top: 60px;
+        }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #9B59B6, #00D2FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+        section { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .section-title {
+            text-align: center; font-size: 36px; font-weight: 800; margin-bottom: 12px;
+        }
+        .section-sub {
+            text-align: center; color: rgba(255,255,255,0.5);
+            font-size: 16px; max-width: 500px; margin: 0 auto 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 32px 28px;
+            transition: 0.3s; cursor: default;
+        }
+        .feature-card:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateY(-5px);
+            border-color: rgba(155,89,182,0.3);
+        }
+        .feature-icon { font-size: 40px; margin-bottom: 16px; }
+        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .feature-card p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+        .tier-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 24px; text-align: center;
+            transition: 0.3s;
+        }
+        .tier-card:hover { transform: scale(1.05); border-color: rgba(155,89,182,0.3); }
+        .tier-card .tier-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .tier-card .tier-desc { font-size: 12px; color: rgba(255,255,255,0.4); }
+        .tier-s { border-color: #FFD700; }
+        .tier-s .tier-name { color: #FFD700; }
+        .tier-a { border-color: #FF6B6B; }
+        .tier-a .tier-name { color: #FF6B6B; }
+        .tier-b { border-color: #FF9F00; }
+        .tier-b .tier-name { color: #FF9F00; }
+        .tier-c { border-color: #00D2FF; }
+        .tier-c .tier-name { color: #00D2FF; }
+        .tier-d { border-color: #95A5A6; }
+        .tier-d .tier-name { color: #95A5A6; }
+
+        .cmd-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        .cmd-category {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 24px;
+        }
+        .cmd-category h3 { font-size: 18px; margin-bottom: 12px; }
+        .cmd-category h3 span { margin-right: 8px; }
+        .cmd-item {
+            display: flex; justify-content: space-between;
+            padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 13px;
+        }
+        .cmd-item:last-child { border: none; }
+        .cmd-name { color: #9B59B6; font-weight: 600; font-family: monospace; }
+        .cmd-desc { color: rgba(255,255,255,0.5); }
+
+        .cta-section {
+            text-align: center; padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(155,89,182,0.1), rgba(0,210,255,0.05));
+            border-radius: 24px; margin: 0 20px;
+        }
+        .cta-section h2 { font-size: 36px; font-weight: 800; margin-bottom: 16px; }
+        .cta-section p { color: rgba(255,255,255,0.6); margin-bottom: 32px; }
+
+        footer {
+            text-align: center; padding: 40px 20px;
+            color: rgba(255,255,255,0.3); font-size: 14px;
+        }
+        footer .credit {
+            color: #9B59B6; font-weight: 600; margin-top: 8px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0f; }
+        ::-webkit-scrollbar-thumb { background: #9B59B6; border-radius: 4px; }
+
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; flex-direction: column; gap: 16px; }
+            .hero h1 { font-size: 38px; }
+            .hero-stats { gap: 30px; flex-wrap: wrap; }
+            .hero { padding: 60px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow2"></div>
+
+    <nav>
+        <div class="logo">✦ SelesterUHC</div>
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="commands.html">Commands</a>
+            <a href="tiers.html">Tiers</a>
+            <a href="faq.html">FAQ</a>
+            <a class="btn-discord" href="#" id="discordLink" target="_blank">Join Discord</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge">⚡ Now in V3</div>
+        <h1>The Ultimate MCPE<br>PvP Bot</h1>
+        <p>
+            Tournaments, tier testing, ranked matchmaking, music, moderation &amp; more
+            — all in one premium Discord bot for your MCPE PvP server.
+        </p>
+        <div class="hero-btns">
+            <a class="btn-primary" href="#" id="inviteBtn">+ Invite Bot</a>
+            <a class="btn-secondary" href="commands.html">Explore Features →</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Commands</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">19</div>
+                <div class="stat-label">Systems</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <h2 class="section-title">⚡ Everything You Need</h2>
+        <p class="section-sub">One bot to run your entire MCPE PvP server.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>Tournaments</h3>
+                <p>Create, manage, and run full brackets — single/double elim, round robin, group stage + playoffs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Tier Testing</h3>
+                <p>Evaluate players across 6 gamemodes. Ticket-based system with staff claiming and result logging.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏅</div>
+                <h3>Ranked Matches</h3>
+                <p>Queue up, find opponents, earn points. Full leaderboard with wins, losses tracking.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <h3>Music Player</h3>
+                <p>Play any song from YouTube in your voice channel. Queue, loop, volume control.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Moderation</h3>
+                <p>Ban, kick, mute, warn, purge, lockdown, nuke — full server management toolkit.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎫</div>
+                <h3>Tickets &amp; Suggestions</h3>
+                <p>Support tickets with panel buttons, staff claims. Suggestions with voting.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎉</div>
+                <h3>Giveaways</h3>
+                <p>Start, reroll, and end giveaways with reaction entry. Auto-draw at end time.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Staff Applications</h3>
+                <p>5-question application modal. Auto-posts to staff channel for review.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3>Auto-Role</h3>
+                <p>Assign roles to new members automatically on join. Multiple roles supported.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="tiers">
+        <h2 class="section-title">🎯 Tier Rankings</h2>
+        <p class="section-sub">Official MCPE PvP tier system — from elite to rising.</p>
+        <div class="tier-grid">
+            <div class="tier-card tier-s"><div class="tier-name">HT1</div><div class="tier-desc">Elite — Top 1%</div></div>
+            <div class="tier-card tier-s"><div class="tier-name">LT1</div><div class="tier-desc">Elite — Top 3%</div></div>
+            <div class="tier-card tier-a"><div class="tier-name">HT2</div><div class="tier-desc">Advanced</div></div>
+            <div class="tier-card tier-a"><div class="tier-name">LT2</div><div class="tier-desc">Advanced</div></div>
+            <div class="tier-card tier-b"><div class="tier-name">HT3</div><div class="tier-desc">Intermediate</div></div>
+            <div class="tier-card tier-b"><div class="tier-name">LT3</div><div class="tier-desc">Intermediate</div></div>
+            <div class="tier-card tier-c"><div class="tier-name">HT4</div><div class="tier-desc">Rookie</div></div>
+            <div class="tier-card tier-c"><div class="tier-name">LT4</div><div class="tier-desc">Rookie</div></div>
+            <div class="tier-card tier-d"><div class="tier-name">Below Avg</div><div class="tier-desc">Rising</div></div>
+        </div>
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="tiers.html" class="btn-secondary" style="display: inline-block;">Full Tier Details →</a>
+        </div>
+    </section>
+
+    <section id="commands">
+        <h2 class="section-title">📚 Quick Commands</h2>
+        <p class="section-sub">Every system at your fingertips.</p>
+        <div class="cmd-grid">
+            <div class="cmd-category">
+                <h3><span>🏆</span>Tournament</h3>
+                <div class="cmd-item"><span class="cmd-name">/t create</span><span class="cmd-desc">Create a tournament</span></div>
+                <div class="cmd-item"><span class="cmd-name">/t setup</span><span class="cmd-desc">Auto-create channels</span></div>
+                <div class="cmd-item"><span class="cmd-name">/t bracket</span><span class="cmd-desc">View live bracket</span></div>
+            </div>
+            <div class="cmd-category">
+                <h3><span>🎯</span>Tier</h3>
+                <div class="cmd-item"><span class="cmd-name">/tier setup</span><span class="cmd-desc">Setup tier system</span></div>
+                <div class="cmd-item"><span class="cmd-name">/tier result</span><span class="cmd-desc">Submit evaluation</span></div>
+            </div>
+            <div class="cmd-category">
+                <h3><span>🏅</span>Ranked</h3>
+                <div class="cmd-item"><span class="cmd-name">/ranked setup</span><span class="cmd-desc">Setup ranked</span></div>
+                <div class="cmd-item"><span class="cmd-name">/lb ranked</span><span class="cmd-desc">Leaderboard</span></div>
+            </div>
+            <div class="cmd-category">
+                <h3><span>🎵</span>Music</h3>
+                <div class="cmd-item"><span class="cmd-name">/music playmusic</span><span class="cmd-desc">Play a song</span></div>
+                <div class="cmd-item"><span class="cmd-name">/music loop</span><span class="cmd-desc">Toggle loop</span></div>
+            </div>
+            <div class="cmd-category">
+                <h3><span>🛡️</span>Server</h3>
+                <div class="cmd-item"><span class="cmd-name">/server ban</span><span class="cmd-desc">Ban a member</span></div>
+                <div class="cmd-item"><span class="cmd-name">/server lockdown</span><span class="cmd-desc">Lock all channels</span></div>
+            </div>
+            <div class="cmd-category">
+                <h3><span>🎫</span>Support</h3>
+                <div class="cmd-item"><span class="cmd-name">/ticket setup</span><span class="cmd-desc">Setup tickets</span></div>
+                <div class="cmd-item"><span class="cmd-name">/apply staff</span><span class="cmd-desc">Staff application</span></div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="commands.html" class="btn-secondary" style="display: inline-block;">View Full Command List →</a>
+        </div>
+    </section>
+
+    <div class="cta-section">
+        <h2>Ready to level up your server?</h2>
+        <p>Add SelesterUHC to your Discord and unlock all premium features.</p>
+        <a class="btn-primary" href="#" id="ctaBtn">+ Invite SelesterUHC</a>
+    </div>
+
+    <footer>
+        <p>SelesterUHC &mdash; The Ultimate MCPE PvP Bot &bull; &copy; 2026</p>
+        <p class="credit">✦ Made by Arunav ✦</p>
+    </footer>
+
+    <script>
+        const DISCORD_INVITE = "#";
+        const BOT_INVITE = "https://discord.com/api/oauth2/authorize?client_id=1510311146253582407&permissions=8&scope=bot%20applications.commands";
+
+        document.querySelectorAll('#discordLink, #inviteBtn, #ctaBtn').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (this.id === 'discordLink' && DISCORD_INVITE !== '#') {
+                    window.open(DISCORD_INVITE, '_blank');
+                } else if (BOT_INVITE !== '#') {
+                    window.open(BOT_INVITE, '_blank');
+                } else {
+                    alert('Set your Discord invite URL and Bot invite URL at the bottom of the HTML!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

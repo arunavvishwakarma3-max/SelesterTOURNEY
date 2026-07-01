@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commands — SelesterUHC</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .cmd-full { display: flex; flex-direction: column; gap: 32px; }
+        .cmd-group { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 28px; }
+        .cmd-group h2 { font-size: 22px; font-weight: 800; margin-bottom: 16px; }
+        .cmd-group h2 span { margin-right: 8px; }
+        .cmd-table { width: 100%; border-collapse: collapse; }
+        .cmd-table tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .cmd-table tr:last-child { border: none; }
+        .cmd-table td { padding: 10px 8px; font-size: 14px; vertical-align: top; }
+        .cmd-table td:first-child { color: #9B59B6; font-weight: 600; font-family: monospace; white-space: nowrap; width: 180px; }
+        .cmd-table td:last-child { color: rgba(255,255,255,0.55); }
+        .cmd-badge { font-size: 11px; background: rgba(155,89,182,0.15); color: #9B59B6; padding: 2px 8px; border-radius: 4px; margin-left: 6px; font-family: 'Segoe UI', sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow2"></div>
+
+    <nav>
+        <div class="logo">✦ SelesterUHC</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="commands.html" class="active">Commands</a>
+            <a href="tiers.html">Tiers</a>
+            <a href="faq.html">FAQ</a>
+            <a class="btn-discord" href="#" id="discordLink" target="_blank">Join Discord</a>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>📚 Full Command List</h1>
+        <p>100+ commands across 19 systems — everything at your fingertips.</p>
+    </div>
+
+    <section>
+        <div class="cmd-full">
+
+            <div class="cmd-group">
+                <h2><span>🏆</span>Tournament <span class="cmd-badge">19 commands</span></h2>
+                <table class="cmd-table">
+                    <tr><td>/t setup</td><td>Auto-create tournament roles & channels</td></tr>
+                    <tr><td>/t create</td><td>Create a new tournament</td></tr>
+                    <tr><td>/t start</td><td>Transition from Registration to Check-in or start matchmaking</td></tr>
+                    <tr><td>/t checkin_end</td><td>End check-in, DQ no-shows, generate brackets</td></tr>
+                    <tr><td>/t result</td><td>Submit match result manually</td></tr>
+                    <tr><td>/t dq</td><td>Disqualify a team</td></tr>
+                    <tr><td>/t removeteam</td><td>Remove a team from registration</td></tr>
+                    <tr><td>/t reset</td><td>Wipe current active tournament</td></tr>
+                    <tr><td>/t setstage</td><td>Manually override tournament stage</td></tr>
+                    <tr><td>/t enter</td><td>Register your team</td></tr>
+                    <tr><td>/t leave</td><td>Withdraw your team</td></tr>
+                    <tr><td>/t checkin</td><td>Confirm attendance</td></tr>
+                    <tr><td>/t match</td><td>Show your current match</td></tr>
+                    <tr><td>/t bracket</td><td>View live bracket</td></tr>
+                    <tr><td>/t standings</td><td>Current rankings & points</td></tr>
+                    <tr><td>/t stats</td><td>Player or team stats</td></tr>
+                    <tr><td>/t history</td><td>Champions history</td></tr>
+                    <tr><td>/t rules</td><td>Tournament rules</td></tr>
+                    <tr><td>/t season</td><td>Season points leaderboard</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🎯</span>Tier Test <span class="cmd-badge">2 commands</span></h2>
+                <table class="cmd-table">
+                    <tr><td>/tier setup</td><td>Auto-create tier channels & ticket category</td></tr>
+                    <tr><td>/tier result</td><td>Submit a tier evaluation result</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🏅</span>Ranked <span class="cmd-badge">3 commands</span></h2>
+                <table class="cmd-table">
+                    <tr><td>/ranked setup</td><td>Auto-create ranked queue & results channels</td></tr>
+                    <tr><td>/ranked stats</td><td>Check your ranked stats</td></tr>
+                    <tr><td>/lb ranked</td><td>View ranked leaderboard</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🎵</span>Music <span class="cmd-badge">10 commands</span></h2>
+                <table class="cmd-table">
+                    <tr><td>/music setup</td><td>Auto-create music category & channel</td></tr>
+                    <tr><td>/music playmusic</td><td>Search YouTube & play in your VC</td></tr>
+                    <tr><td>/music stop</td><td>Stop playback & disconnect</td></tr>
+                    <tr><td>/music skip</td><td>Skip current track</td></tr>
+                    <tr><td>/music queue</td><td>View upcoming songs</td></tr>
+                    <tr><td>/music pause</td><td>Pause playback</td></tr>
+                    <tr><td>/music resume</td><td>Resume playback</td></tr>
+                    <tr><td>/music volume</td><td>Set volume (0-100)</td></tr>
+                    <tr><td>/music nowplaying</td><td>Current song info</td></tr>
+                    <tr><td>/music loop</td><td>Toggle queue looping</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🛡️</span>Server <span class="cmd-badge">20 commands</span></h2>
+                <table class="cmd-table">
+                    <tr><td>/server announce</td><td>Send an announcement</td></tr>
+                    <tr><td>/server ban</td><td>Ban a member</td></tr>
+                    <tr><td>/server kick</td><td>Kick a member</td></tr>
+                    <tr><td>/server mute</td><td>Timeout a member</td></tr>
+                    <tr><td>/server unmute</td><td>Remove timeout</td></tr>
+                    <tr><td>/server lock</td><td>Lock a channel</td></tr>
+                    <tr><td>/server unlock</td><td>Unlock a channel</td></tr>
+                    <tr><td>/server purge</td><td>Delete messages</td></tr>
+                    <tr><td>/server nick</td><td>Change nickname</td></tr>
+                    <tr><td>/server role</td><td>Add/remove a role</td></tr>
+                    <tr><td>/server slowmode</td><td>Set slowmode</td></tr>
+                    <tr><td>/server rules</td><td>Post server rules</td></tr>
+                    <tr><td>/server setname</td><td>Change bot username</td></tr>
+                    <tr><td>/server warn</td><td>Warn a member</td></tr>
+                    <tr><td>/server warnings</td><td>View warnings</td></tr>
+                    <tr><td>/server clearwarn</td><td>Clear warnings</td></tr>
+                    <tr><td>/server nuke</td><td>Clone & delete a channel</td></tr>
+                    <tr><td>/server addemoji</td><td>Add custom emoji</td></tr>
+                    <tr><td>/server lockdown</td><td>Lock all channels</td></tr>
+                    <tr><td>/server unlockdown</td><td>Undo lockdown</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>👋</span>Welcome</h2>
+                <table class="cmd-table">
+                    <tr><td>/welcome setup</td><td>Auto-create welcome channel</td></tr>
+                    <tr><td>/welcome test</td><td>Test welcome message</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>💡</span>Suggestions</h2>
+                <table class="cmd-table">
+                    <tr><td>/suggestion setup</td><td>Auto-create suggestions channel</td></tr>
+                    <tr><td>/suggestion submit</td><td>Submit a suggestion</td></tr>
+                    <tr><td>/suggestion approve</td><td>Approve a suggestion</td></tr>
+                    <tr><td>/suggestion deny</td><td>Deny a suggestion</td></tr>
+                    <tr><td>/suggest submit</td><td>Alias for suggestion submit</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🎫</span>Tickets</h2>
+                <table class="cmd-table">
+                    <tr><td>/ticket setup</td><td>Auto-create ticket category & panel</td></tr>
+                    <tr><td>/ticket panel</td><td>Post the ticket panel</td></tr>
+                    <tr><td>/ticket close</td><td>Close a ticket</td></tr>
+                    <tr><td>/ticket add</td><td>Add user to ticket</td></tr>
+                    <tr><td>/ticket remove</td><td>Remove user from ticket</td></tr>
+                    <tr><td>/ticket claim</td><td>Claim a ticket</td></tr>
+                    <tr><td>/ticket subject</td><td>Set ticket subject</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🎉</span>Giveaways</h2>
+                <table class="cmd-table">
+                    <tr><td>/giveaway setup</td><td>Auto-create giveaways channel</td></tr>
+                    <tr><td>/giveaway start</td><td>Start a giveaway</td></tr>
+                    <tr><td>/giveaway reroll</td><td>Reroll winner</td></tr>
+                    <tr><td>/giveaway end</td><td>End giveaway early</td></tr>
+                    <tr><td>/giveaway list</td><td>List active giveaways</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>📋</span>Applications</h2>
+                <table class="cmd-table">
+                    <tr><td>/apply staff</td><td>Submit staff application</td></tr>
+                    <tr><td>/apply staffsetup</td><td>Auto-create applications channel</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🎭</span>Auto-Role</h2>
+                <table class="cmd-table">
+                    <tr><td>/autorole add</td><td>Add auto-role on join</td></tr>
+                    <tr><td>/autorole remove</td><td>Remove auto-role</td></tr>
+                    <tr><td>/autorole list</td><td>View current auto-roles</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🔧</span>Utility</h2>
+                <table class="cmd-table">
+                    <tr><td>/ping</td><td>Bot latency</td></tr>
+                    <tr><td>/uptime</td><td>Bot uptime</td></tr>
+                    <tr><td>/avatar</td><td>User avatar</td></tr>
+                    <tr><td>/banner</td><td>User banner</td></tr>
+                    <tr><td>/userinfo</td><td>User information</td></tr>
+                    <tr><td>/serverinfo</td><td>Server information</td></tr>
+                    <tr><td>/roleinfo</td><td>Role information</td></tr>
+                    <tr><td>/channelinfo</td><td>Channel information</td></tr>
+                    <tr><td>/botinfo</td><td>Bot information</td></tr>
+                    <tr><td>/membercount</td><td>Server member count</td></tr>
+                    <tr><td>/roles</td><td>List all roles</td></tr>
+                    <tr><td>/emojis</td><td>List all emojis</td></tr>
+                    <tr><td>/invite</td><td>Bot invite link</td></tr>
+                </table>
+            </div>
+
+            <div class="cmd-group">
+                <h2><span>🎪</span>Fun</h2>
+                <table class="cmd-table">
+                    <tr><td>/say</td><td>Make the bot say something</td></tr>
+                    <tr><td>/embed</td><td>Send a custom embed</td></tr>
+                    <tr><td>/poll</td><td>Create a poll</td></tr>
+                    <tr><td>/coinflip</td><td>Flip a coin</td></tr>
+                    <tr><td>/dice</td><td>Roll a dice</td></tr>
+                    <tr><td>/8ball</td><td>Ask the magic 8ball</td></tr>
+                    <tr><td>/choose</td><td>Pick between options</td></tr>
+                    <tr><td>/random</td><td>Random number</td></tr>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <p>SelesterUHC &mdash; Made with ❤️ for MCPE PvP &bull; &copy; 2026</p>
+    </footer>
+
+    <script>
+        document.getElementById('discordLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Set your Discord invite URL in the HTML!');
+        });
+    </script>
+</body>
+</html>

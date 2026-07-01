@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ — SelesterUHC</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .faq-list { display: flex; flex-direction: column; gap: 12px; }
+        .faq-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px; overflow: hidden;
+            transition: 0.3s;
+        }
+        .faq-q {
+            padding: 20px 24px; font-size: 16px; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: space-between;
+            align-items: center; user-select: none;
+        }
+        .faq-q:hover { background: rgba(255,255,255,0.03); }
+        .faq-arrow { font-size: 14px; transition: 0.3s; color: rgba(255,255,255,0.3); }
+        .faq-item.open .faq-arrow { transform: rotate(180deg); }
+        .faq-a {
+            max-height: 0; overflow: hidden; transition: 0.3s;
+            padding: 0 24px; color: rgba(255,255,255,0.55); font-size: 14px; line-height: 1.7;
+        }
+        .faq-item.open .faq-a {
+            max-height: 300px; padding: 0 24px 20px;
+        }
+
+        .status-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 40px 0; }
+        .status-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px; padding: 24px; text-align: center;
+        }
+        .status-card .s-icon { font-size: 36px; margin-bottom: 8px; }
+        .status-card h4 { font-size: 16px; font-weight: 700; }
+        .status-card p { color: rgba(255,255,255,0.45); font-size: 13px; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow2"></div>
+
+    <nav>
+        <div class="logo">✦ SelesterUHC</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="commands.html">Commands</a>
+            <a href="tiers.html">Tiers</a>
+            <a href="faq.html" class="active">FAQ</a>
+            <a class="btn-discord" href="#" id="discordLink" target="_blank">Join Discord</a>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>❓ FAQ</h1>
+        <p>Common questions about the SelesterUHC bot.</p>
+    </div>
+
+    <section>
+        <div class="status-cards">
+            <div class="status-card">
+                <div class="s-icon">🤖</div>
+                <h4>Bot Status</h4>
+                <p>✅ Online 24/7</p>
+            </div>
+            <div class="status-card">
+                <div class="s-icon">📊</div>
+                <h4>Total Commands</h4>
+                <p>100+ commands</p>
+            </div>
+            <div class="status-card">
+                <div class="s-icon">🎮</div>
+                <h4>Gamemodes</h4>
+                <p>6 PvP modes</p>
+            </div>
+            <div class="status-card">
+                <div class="s-icon">🏅</div>
+                <h4>Tier Levels</h4>
+                <p>9 ranks</p>
+            </div>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-q">What is SelesterUHC? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">SelesterUHC is a premium multi-purpose Discord bot built for MCPE PvP servers. It features tournament management, tier testing, ranked matchmaking, music playback, server moderation, tickets, suggestions, giveaways, staff applications, auto-roles, and more — all with professional premium-styled embeds.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">How do I set up the bot? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Every system has a <code>/setup</code> command that auto-creates all needed channels and categories. Just run <code>/tier setup</code>, <code>/ranked setup</code>, <code>/music setup</code>, <code>/welcome setup</code>, etc. — one command per system and you're ready to go.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">How does tier testing work? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Go to <code>#tier-test</code>, select your gamemode (Skywars, BUHC, FUHC, Boxing, Midfight, or Bedfight). A ticket is created for a staff member to claim. You play your evaluation match, and the staff member submits your tier result using <code>/tier result</code>. Your new tier is posted in <code>#tier-results</code>.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">What are the tier rankings? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">From highest to lowest: <strong>HT1</strong> (Elite), <strong>LT1</strong> (Elite), <strong>HT2</strong> (Advanced), <strong>LT2</strong> (Advanced), <strong>HT3</strong> (Intermediate), <strong>LT3</strong> (Intermediate), <strong>HT4</strong> (Rookie), <strong>LT4</strong> (Rookie), <strong>Below Avg</strong> (Rising). Check the <a href="tiers.html">Tiers page</a> for full details.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">How do I play music? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Join any voice channel and use <code>/music playmusic &lt;song name&gt;</code>. The bot will join your VC and play audio from YouTube. Use <code>/music queue</code> to see upcoming songs, <code>/music skip</code> to skip, <code>/music volume</code> to adjust, and <code>/music loop</code> to enable queue looping.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">How do I apply for staff? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Use <code>/apply staff</code> and fill out the modal with your IGN, age, why you want staff, your experience, and your available hours. The application is posted in <code>#staff-applications</code> where staff can review and react.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Can I get auto-roles when new members join? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Yes! Use <code>/autorole add &lt;role&gt;</code> to add a role that will be automatically assigned to every new member. You can add multiple roles. Use <code>/autorole list</code> to see current auto-roles and <code>/autorole remove</code> to remove one.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">How do I create suggestions? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Use <code>/suggestion submit &lt;your idea&gt;</code> or <code>/suggest submit &lt;your idea&gt;</code>. Staff can approve or deny using <code>/suggestion approve</code> and <code>/suggestion deny</code>. Members can vote with ✅ and ❌ reactions on the suggestion message.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">How do tournaments work? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Run <code>/t setup</code> once to create roles and channels. Then <code>/t create</code> to start a tournament. Players register with <code>/t enter</code>. Staff start check-in with <code>/t start</code>. After check-in ends with <code>/t checkin_end</code>, brackets generate automatically. Results are submitted with <code>/t result</code>.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">The bot is not responding to commands. What do I do? <span class="faq-arrow">▼</span></div>
+                <div class="faq-a">Make sure the bot has the necessary permissions (view channels, send messages, embed links, manage channels for setup commands). Try mentioning the bot <code>@SelesterUHC</code> to see if it responds. If still stuck, ask an admin to restart the bot.</div>
+            </div>
+        </div>
+
+        <div class="info-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 28px 32px; margin-top: 40px;">
+            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px;">📬 Still Need Help?</h3>
+            <p style="color: rgba(255,255,255,0.55); font-size: 14px; line-height: 1.7;">
+                Join the official Discord server and open a support ticket using the <code>#create-ticket</code> panel.<br>
+                Our staff team will help you with any bot-related issues.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>SelesterUHC &mdash; Made with ❤️ for MCPE PvP &bull; &copy; 2026</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.faq-q').forEach(q => {
+            q.addEventListener('click', () => {
+                q.parentElement.classList.toggle('open');
+            });
+        });
+        document.getElementById('discordLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Set your Discord invite URL in the HTML!');
+        });
+    </script>
+</body>
+</html>
