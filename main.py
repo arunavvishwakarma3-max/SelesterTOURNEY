@@ -81,7 +81,7 @@ class TournamentBot(commands.Bot):
         await self.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.playing,
-                name=f"Made with ❤️ • {len(self.guilds)} servers"
+                name=f"🌟 Selester • {len(self.guilds)} servers"
             )
         )
         
