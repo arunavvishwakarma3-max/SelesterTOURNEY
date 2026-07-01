@@ -53,31 +53,87 @@ class TierGroup(app_commands.Group):
         if tester_role:
             data["tier_tester_role_id"] = tester_role.id
 
-        database.save_guild_config_v3(interaction.guild_id, data)
-
         embed = embeds.tier_test_hub_embed()
         view = views.TierGamemodeSelect()
         msg = await tier_channel.send(embed=embed, view=view)
+        data["tier_message_id"] = str(msg.id)
+
+        database.save_guild_config_v3(interaction.guild_id, data)
+
         bot_ref = interaction.client
         if hasattr(bot_ref, 'add_view') and callable(bot_ref.add_view):
             bot_ref.add_view(view, message_id=msg.id)
 
-        success_embed = discord.Embed(
-            title="✅ TIER SYSTEM ACTIVATED",
-            description=(
-                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"Tier system configured in your selected channels.\n"
-                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-                f"📌 **Tier Lobby:** {tier_channel.mention}\n"
-                f"📌 **Results Channel:** {results_channel.mention}\n"
-                f"📌 **Ticket Category:** {ticket_category.mention}\n"
-                f"👤 **Staff Role:** {staff_role.mention}\n"
-                f"{f'👤 **Tester Role:** {tester_role.mention}' if tester_role else ''}"
-            ),
-            color=embeds.COLOR_GREEN
+        success = embeds.tiersetup_success_embed(tier_channel, results_channel, ticket_category, staff_role, tester_role)
+        await interaction.followup.send(embed=success, ephemeral=True)
+
+    @app_commands.command(name="remove", description="Delete the tier hub message and clear the channel config.")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def remove(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+        cfg = database.get_guild_config_v3(interaction.guild_id)
+        if not cfg or not cfg.get('tier_channel_id'):
+            await interaction.followup.send("❌ No tier system configured.", ephemeral=True)
+            return
+        tier_channel = interaction.guild.get_channel(cfg['tier_channel_id'])
+        if tier_channel and cfg.get('tier_message_id'):
+            try:
+                msg = await tier_channel.fetch_message(int(cfg['tier_message_id']))
+                await msg.delete()
+            except:
+                pass
+        database.save_guild_config_v3(interaction.guild_id, {
+            "tier_channel_id": None,
+            "tier_results_channel_id": None,
+            "ticket_category_id": None,
+            "tier_message_id": None
+        })
+        embed = embeds.tier_remove_embed()
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+    @app_commands.command(name="setrole", description="Map a tier name to a role (auto-assigned on result).")
+    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.describe(tier="Tier name (e.g. A, B, S)", role="Role to assign")
+    async def setrole(self, interaction: discord.Interaction, tier: str, role: discord.Role):
+        await interaction.response.defer(ephemeral=True)
+        database.set_tier_role(interaction.guild_id, tier, role.id)
+        embed = embeds.tier_role_embed(tier.upper(), role.mention)
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+    @app_commands.command(name="unsetrole", description="Remove a tier-to-role mapping.")
+    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.describe(tier="Tier name to remove mapping for")
+    async def unsetrole(self, interaction: discord.Interaction, tier: str):
+        await interaction.response.defer(ephemeral=True)
+        database.unset_tier_role(interaction.guild_id, tier)
+        embed = discord.Embed(
+            title="✅ Mapping Removed",
+            description=f"**{tier.upper()}** role mapping has been removed.",
+            color=embeds.COLOR_INFO
         )
-        success_embed.set_footer(text="SELESTER V3 • Tier System Online")
-        await interaction.followup.send(embed=success_embed, ephemeral=True)
+        embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+        embed.set_footer(text="Selester V3")
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+    @app_commands.command(name="roles", description="List all tier-to-role mappings.")
+    async def roles(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+        mapping = database.get_tier_roles(interaction.guild_id)
+        embed = embeds.tier_roles_list_embed(mapping)
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+    @app_commands.command(name="history", description="Show recent tier evaluation results.")
+    async def history(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+        results = database.get_tier_results(interaction.guild_id, limit=10)
+        if not results:
+            embed = discord.Embed(title="📋 Recent Evaluations", description="No results recorded yet.", color=embeds.COLOR_INFO)
+            embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+            embed.set_footer(text="Selester V3")
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            return
+        embed = embeds.tier_history_embed(results)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="queue-setup", description="Post the tier test queue panel in a channel.")
     @app_commands.checks.has_permissions(administrator=True)

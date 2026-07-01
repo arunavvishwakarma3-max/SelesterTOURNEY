@@ -9,6 +9,8 @@ COLOR_PURPLE = 0xD500F9
 COLOR_GOLD = 0xFFD700
 COLOR_RED = 0xFF1744
 COLOR_DARK = 0x1A1A1A
+COLOR_INFO = 0x7289DA
+COLOR_SUCCESS = 0x43B581
 
 def get_stage_color(stage: str) -> int:
     stage_colors = {
@@ -252,22 +254,98 @@ def tier_test_hub_embed() -> discord.Embed:
     embed.set_footer(text="Selester V3 • Tier System")
     return embed
 
-def tier_ticket_embed(user_id: int, gamemode: str) -> discord.Embed:
+def tier_ticket_embed(user_id: int, gamemode: str, ign: str, time: str) -> discord.Embed:
     embed = discord.Embed(
         title="🎟️ New Tier Test",
-        description=f"**{gamemode}** test requested by <@{user_id}>",
+        description=f"<@{user_id}> requested a **{gamemode}** evaluation",
         color=COLOR_TICKET
     )
     embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
-    embed.add_field(name="👤 Player", value=f"<@{user_id}>", inline=True)
-    embed.add_field(name="🎮 Gamemode", value=gamemode, inline=True)
+    embed.add_field(name="IGN", value=ign, inline=True)
+    embed.add_field(name="Availability", value=time, inline=True)
     embed.add_field(name="Status", value="Unclaimed", inline=True)
     embed.add_field(
         name="Actions",
-        value="Staff: Click **Claim** to handle\nTester: Use `/tier result` after evaluation",
+        value="• **Claim** — handle this request\n• **Result** — submit evaluation\n• **Close** — delete channel",
         inline=False
     )
     embed.set_footer(text="Selester V3 • Tier Ticket")
+    return embed
+
+def tier_claim_embed(user_id: int, gamemode: str, ign: str, time: str, claimed_by: int) -> discord.Embed:
+    embed = discord.Embed(
+        title="✋ Request Claimed",
+        description=f"<@{claimed_by}> is handling the **{gamemode}** evaluation for <@{user_id}>.",
+        color=COLOR_GOLD
+    )
+    embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    embed.add_field(name="IGN", value=ign, inline=True)
+    embed.add_field(name="Availability", value=time, inline=True)
+    embed.set_footer(text="Selester V3 • Evaluation in progress")
+    return embed
+
+def tier_history_embed(results: list) -> discord.Embed:
+    embed = discord.Embed(
+        title="📋 Recent Evaluations",
+        color=COLOR_INFO
+    )
+    embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    for r in results:
+        embed.add_field(
+            name=f"{r['ign']} — {r['previous_tier']} ➜ {r['new_tier']}",
+            value=f"Player: <@{r['user_id']}> • Tester: <@{r['tester_id']}>",
+            inline=False
+        )
+    embed.set_footer(text="Selester V3 • Latest results")
+    return embed
+
+def tier_role_embed(tier_name: str, role_mention: str) -> discord.Embed:
+    embed = discord.Embed(
+        title="✅ Role Mapping Added",
+        description=f"**{tier_name}** ➜ {role_mention}",
+        color=COLOR_SUCCESS
+    )
+    embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    embed.set_footer(text="Selester V3")
+    return embed
+
+def tier_roles_list_embed(mapping: dict) -> discord.Embed:
+    lines = "\n".join(f"• **{t}** ➜ <@&{r}>" for t, r in mapping.items())
+    embed = discord.Embed(
+        title="📋 Tier Role Mappings",
+        description=lines or "No mappings configured.",
+        color=COLOR_TIER
+    )
+    embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    embed.set_footer(text="Selester V3 • Use /tier setrole to add")
+    return embed
+
+def tiersetup_success_embed(tier_channel, results_channel, ticket_category, staff_role, tester_role=None) -> discord.Embed:
+    desc = (
+        f"• **Tier Channel:** {tier_channel.mention}\n"
+        f"• **Results Channel:** {results_channel.mention}\n"
+        f"• **Ticket Category:** {ticket_category.mention}\n"
+        f"• **Staff Role:** {staff_role.mention}\n"
+    )
+    if tester_role:
+        desc += f"• **Tester Role:** {tester_role.mention}"
+    embed = discord.Embed(
+        title="✅ System Ready",
+        description=desc,
+        color=COLOR_SUCCESS
+    )
+    embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    embed.set_footer(text="Selester V3 • Tier system configured")
+    return embed
+
+def tier_remove_embed() -> discord.Embed:
+    embed = discord.Embed(
+        title="🗑️ System Removed",
+        description="The tier hub has been deleted. Run **/tier setup** to reconfigure.",
+        color=COLOR_INFO
+    )
+    embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    embed.set_footer(text="Selester V3")
     return embed
 
 def tier_result_embed(result: dict) -> discord.Embed:

@@ -586,35 +586,30 @@ async def run_auto_role_updates(guild: discord.Guild, tournament_id: int, new_st
 # V3: TIER TEST VIEWS
 # =====================================================================
 
-class TierGamemodeSelect(discord.ui.View):
-    def __init__(self):
-        super().__init__(timeout=None)
+class TierInfoModal(discord.ui.Modal):
+    def __init__(self, gamemode: str):
+        super().__init__(title=f"Tier Test — {gamemode}")
+        self.gamemode = gamemode
 
-    @discord.ui.button(label="Skywars", emoji="🌌", style=discord.ButtonStyle.primary, row=0, custom_id="tier_gm_skywars")
-    async def btn_skywars(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self._create_ticket(interaction, "Skywars")
+        self.ign_input = discord.ui.TextInput(
+            label="In-Game Name (IGN)",
+            placeholder="Enter your Minecraft IGN",
+            min_length=2,
+            max_length=20,
+            required=True
+        )
+        self.add_item(self.ign_input)
 
-    @discord.ui.button(label="BUHC", emoji="⚔️", style=discord.ButtonStyle.danger, row=0, custom_id="tier_gm_buhc")
-    async def btn_buhc(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self._create_ticket(interaction, "BUHC")
+        self.time_input = discord.ui.TextInput(
+            label="Availability Time",
+            placeholder="e.g. 5:00 PM - 8:00 PM today",
+            min_length=2,
+            max_length=50,
+            required=True
+        )
+        self.add_item(self.time_input)
 
-    @discord.ui.button(label="FUHC", emoji="🔥", style=discord.ButtonStyle.success, row=0, custom_id="tier_gm_fuhc")
-    async def btn_fuhc(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self._create_ticket(interaction, "FUHC")
-
-    @discord.ui.button(label="Boxing", emoji="🥊", style=discord.ButtonStyle.primary, row=1, custom_id="tier_gm_boxing")
-    async def btn_boxing(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self._create_ticket(interaction, "Boxing")
-
-    @discord.ui.button(label="Midfight", emoji="⚡", style=discord.ButtonStyle.success, row=1, custom_id="tier_gm_midfight")
-    async def btn_midfight(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self._create_ticket(interaction, "Midfight")
-
-    @discord.ui.button(label="Bedfight", emoji="🛏️", style=discord.ButtonStyle.danger, row=1, custom_id="tier_gm_bedfight")
-    async def btn_bedfight(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self._create_ticket(interaction, "Bedfight")
-
-    async def _create_ticket(self, interaction: discord.Interaction, gamemode: str):
+    async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
 
         cfg = database.get_guild_config_v3(interaction.guild_id)
@@ -626,6 +621,9 @@ class TierGamemodeSelect(discord.ui.View):
         if not category:
             await interaction.followup.send("❌ Ticket category not found.", ephemeral=True)
             return
+
+        ign = self.ign_input.value.strip()
+        time = self.time_input.value.strip()
 
         overwrites = {
             interaction.guild.default_role: discord.PermissionOverwrite(read_messages=False),
@@ -641,7 +639,7 @@ class TierGamemodeSelect(discord.ui.View):
             if staff_role:
                 overwrites[staff_role] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
 
-        chan_name = f"tier-{interaction.user.name}-{gamemode.lower()}"
+        chan_name = f"tier-{interaction.user.name}-{self.gamemode.lower()}"
         clean = "".join(c if (c.isalnum() or c == "-") else "" for c in chan_name).lower()
 
         try:
@@ -652,20 +650,137 @@ class TierGamemodeSelect(discord.ui.View):
             await interaction.followup.send(f"❌ Failed to create ticket: {e}", ephemeral=True)
             return
 
-        ticket_id = database.create_tier_ticket(interaction.guild_id, channel.id, interaction.user.id, gamemode)
+        ticket_id = database.create_tier_ticket(interaction.guild_id, channel.id, interaction.user.id, self.gamemode, ign, time)
 
-        embed = embeds.tier_ticket_embed(interaction.user.id, gamemode)
-        view = TierTicketView(ticket_id, interaction.user.id, gamemode)
-        await channel.send(f"<@{interaction.user.id}> | <@&{cfg['tier_staff_role_id']}>" if cfg['tier_staff_role_id'] else f"<@{interaction.user.id}>", embed=embed, view=view)
+        embed = embeds.tier_ticket_embed(interaction.user.id, self.gamemode, ign, time)
+        view = TierTicketView(ticket_id, interaction.user.id, self.gamemode, ign, time)
+        await channel.send(
+            f"<@{interaction.user.id}> | <@&{cfg['tier_staff_role_id']}>" if cfg['tier_staff_role_id'] else f"<@{interaction.user.id}>",
+            embed=embed, view=view
+        )
 
         await interaction.followup.send(f"✅ Ticket created! Check {channel.mention}", ephemeral=True)
 
+
+class TierResultModal(discord.ui.Modal):
+    def __init__(self, ticket_id: int, gamemode: str):
+        super().__init__(title=f"Result — {gamemode}")
+        self.ticket_id = ticket_id
+
+        self.ign_input = discord.ui.TextInput(
+            label="Player IGN",
+            placeholder="Enter the player's IGN",
+            max_length=20,
+            required=True
+        )
+        self.add_item(self.ign_input)
+
+        self.tier_input = discord.ui.TextInput(
+            label="Tier Given",
+            placeholder="e.g. A, B, C, D, S",
+            max_length=10,
+            required=True
+        )
+        self.add_item(self.tier_input)
+
+        self.note_input = discord.ui.TextInput(
+            label="Note (optional)",
+            placeholder="Any additional notes",
+            max_length=100,
+            required=False
+        )
+        self.add_item(self.note_input)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        ticket = database.get_tier_ticket_by_id(self.ticket_id)
+        if not ticket:
+            await interaction.followup.send("❌ Ticket not found.", ephemeral=True)
+            return
+
+        ign = self.ign_input.value.strip()
+        new_tier = self.tier_input.value.strip().upper()
+        note = self.note_input.value.strip() or None
+
+        database.complete_tier_ticket(
+            ticket_id=self.ticket_id,
+            ign=ign,
+            new_tier=new_tier,
+            note=note,
+            tester_id=interaction.user.id
+        )
+
+        result = {
+            'user_id': ticket['user_id'],
+            'ign': ign,
+            'previous_tier': ticket.get('previous_tier'),
+            'new_tier': new_tier,
+            'note': note,
+            'tester_id': interaction.user.id
+        }
+        embed = embeds.tier_result_embed(result)
+
+        cfg = database.get_guild_config_v3(interaction.guild_id)
+        if cfg and cfg['tier_results_channel_id']:
+            chan = interaction.guild.get_channel(cfg['tier_results_channel_id'])
+            if chan:
+                await chan.send(embed=embed)
+
+        # Assign role if mapping exists
+        if cfg and cfg.get('tier_roles'):
+            import json
+            mapping = json.loads(cfg['tier_roles']) if isinstance(cfg['tier_roles'], str) else cfg['tier_roles']
+            role_id = mapping.get(new_tier)
+            if role_id:
+                role = interaction.guild.get_role(int(role_id))
+                if role:
+                    member = interaction.guild.get_member(ticket['user_id'])
+                    if member:
+                        try:
+                            await member.add_roles(role)
+                        except:
+                            pass
+
+        await interaction.followup.send("✅ Result submitted!", ephemeral=True)
+        await interaction.channel.send(embed=embed)
+
+
+class TierGamemodeSelect(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="Skywars", emoji="🌌", style=discord.ButtonStyle.primary, row=0, custom_id="tier_gm_skywars")
+    async def btn_skywars(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(TierInfoModal("Skywars"))
+
+    @discord.ui.button(label="BUHC", emoji="⚔️", style=discord.ButtonStyle.danger, row=0, custom_id="tier_gm_buhc")
+    async def btn_buhc(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(TierInfoModal("BUHC"))
+
+    @discord.ui.button(label="FUHC", emoji="🔥", style=discord.ButtonStyle.success, row=0, custom_id="tier_gm_fuhc")
+    async def btn_fuhc(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(TierInfoModal("FUHC"))
+
+    @discord.ui.button(label="Boxing", emoji="🥊", style=discord.ButtonStyle.primary, row=1, custom_id="tier_gm_boxing")
+    async def btn_boxing(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(TierInfoModal("Boxing"))
+
+    @discord.ui.button(label="Midfight", emoji="⚡", style=discord.ButtonStyle.success, row=1, custom_id="tier_gm_midfight")
+    async def btn_midfight(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(TierInfoModal("Midfight"))
+
+    @discord.ui.button(label="Bedfight", emoji="🛏️", style=discord.ButtonStyle.danger, row=1, custom_id="tier_gm_bedfight")
+    async def btn_bedfight(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(TierInfoModal("Bedfight"))
+
 class TierTicketView(discord.ui.View):
-    def __init__(self, ticket_id: int, user_id: int, gamemode: str):
+    def __init__(self, ticket_id: int, user_id: int, gamemode: str, ign: str, time: str):
         super().__init__(timeout=None)
         self.ticket_id = ticket_id
         self.user_id = user_id
         self.gamemode = gamemode
+        self.ign = ign
+        self.time = time
 
     @discord.ui.button(label="Claim", style=discord.ButtonStyle.primary, row=0, custom_id="tier_claim", emoji="✋")
     async def claim_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -676,17 +791,21 @@ class TierTicketView(discord.ui.View):
 
         database.claim_tier_ticket(self.ticket_id, interaction.user.id)
 
-        embed = discord.Embed(
-            title="✋ TICKET CLAIMED",
-            description=f"<@{interaction.user.id}> is now handling this tier test!",
-            color=embeds.COLOR_AMBER
-        )
-        embed.add_field(name="🎮 Gamemode", value=f"`{self.gamemode}`", inline=True)
-        embed.add_field(name="👤 Player", value=f"<@{self.user_id}>", inline=True)
+        embed = embeds.tier_claim_embed(self.user_id, self.gamemode, self.ign, self.time, interaction.user.id)
         await interaction.response.send_message(embed=embed)
 
-        button.disabled = True
+        for b in self.children:
+            if b.custom_id == "tier_claim":
+                b.disabled = True
         await interaction.message.edit(view=self)
+
+    @discord.ui.button(label="Result", style=discord.ButtonStyle.success, row=0, custom_id="tier_result", emoji="✅")
+    async def result_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
+        ticket = database.get_tier_ticket(interaction.channel.id)
+        if not ticket or ticket['status'] == 'closed':
+            await interaction.response.send_message("❌ Ticket is closed.", ephemeral=True)
+            return
+        await interaction.response.send_modal(TierResultModal(self.ticket_id, self.gamemode))
 
     @discord.ui.button(label="Close", style=discord.ButtonStyle.danger, row=0, custom_id="tier_close", emoji="🔒")
     async def close_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):

@@ -170,6 +170,11 @@ def init_db():
                 cursor.execute(f"ALTER TABLE guild_config_v3 ADD COLUMN {col} INTEGER")
             except sqlite3.OperationalError:
                 pass
+        for col in ['tier_message_id', 'tier_roles']:
+            try:
+                cursor.execute(f"ALTER TABLE guild_config_v3 ADD COLUMN {col} TEXT DEFAULT ''")
+            except sqlite3.OperationalError:
+                pass
 
         # 8. Tier Test Tickets
         cursor.execute("""
@@ -179,11 +184,19 @@ def init_db():
             channel_id INTEGER,
             user_id INTEGER,
             gamemode TEXT NOT NULL,
+            ign TEXT DEFAULT '',
+            time TEXT DEFAULT '',
+            previous_tier TEXT,
             status TEXT DEFAULT 'open',
             claimed_by INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
+        for col in ['ign', 'time', 'previous_tier']:
+            try:
+                cursor.execute(f"ALTER TABLE tier_tickets ADD COLUMN {col} TEXT DEFAULT ''")
+            except sqlite3.OperationalError:
+                pass
 
         # 9. Tier Test Results
         cursor.execute("""
@@ -711,19 +724,26 @@ def save_guild_config_v3(guild_id: int, data: dict):
 # V3: TIER TEST SYSTEM
 # =====================================================================
 
-def create_tier_ticket(guild_id: int, channel_id: int, user_id: int, gamemode: str):
+def create_tier_ticket(guild_id: int, channel_id: int, user_id: int, gamemode: str, ign: str = '', time: str = ''):
+    previous = get_tier_results_for_user(guild_id, user_id)
+    prev_tier = previous[0]['new_tier'] if previous else None
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO tier_tickets (guild_id, channel_id, user_id, gamemode, status)
-            VALUES (?, ?, ?, ?, 'open')
-        """, (guild_id, channel_id, user_id, gamemode))
+            INSERT INTO tier_tickets (guild_id, channel_id, user_id, gamemode, ign, time, previous_tier, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'open')
+        """, (guild_id, channel_id, user_id, gamemode, ign, time, prev_tier))
         conn.commit()
         return cursor.lastrowid
 
 def get_tier_ticket(channel_id: int):
     with get_db() as conn:
         row = conn.execute("SELECT * FROM tier_tickets WHERE channel_id = ?", (channel_id,)).fetchone()
+        return dict(row) if row else None
+
+def get_tier_ticket_by_id(ticket_id: int):
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM tier_tickets WHERE id = ?", (ticket_id,)).fetchone()
         return dict(row) if row else None
 
 def claim_tier_ticket(ticket_id: int, claimed_by: int):
@@ -734,6 +754,18 @@ def claim_tier_ticket(ticket_id: int, claimed_by: int):
 def close_tier_ticket(ticket_id: int):
     with get_db() as conn:
         conn.execute("UPDATE tier_tickets SET status = 'closed' WHERE id = ?", (ticket_id,))
+        conn.commit()
+
+def complete_tier_ticket(ticket_id: int, ign: str, new_tier: str, note: str, tester_id: int):
+    with get_db() as conn:
+        ticket = conn.execute("SELECT * FROM tier_tickets WHERE id = ?", (ticket_id,)).fetchone()
+        if not ticket:
+            return
+        conn.execute("""
+            INSERT INTO tier_results (guild_id, user_id, ign, previous_tier, new_tier, note, tester_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (ticket['guild_id'], ticket['user_id'], ign, ticket['previous_tier'], new_tier, note, tester_id))
+        conn.execute("UPDATE tier_tickets SET status = 'completed' WHERE id = ?", (ticket_id,))
         conn.commit()
 
 def save_tier_result(guild_id: int, user_id: int, ign: str, previous_tier: str, new_tier: str, note: str, tester_id: int):
@@ -748,6 +780,39 @@ def get_tier_results(guild_id: int, limit: int = 10):
     with get_db() as conn:
         rows = conn.execute("SELECT * FROM tier_results WHERE guild_id = ? ORDER BY id DESC LIMIT ?", (guild_id, limit)).fetchall()
         return [dict(r) for r in rows]
+
+def get_tier_results_for_user(guild_id: int, user_id: int):
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT * FROM tier_results WHERE guild_id = ? AND user_id = ? ORDER BY id DESC LIMIT 1",
+            (guild_id, user_id)
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+# Tier role mapping
+def set_tier_role(guild_id: int, tier: str, role_id: int):
+    import json
+    cfg = get_guild_config_v3(guild_id) or {}
+    raw = cfg.get('tier_roles') or '{}'
+    mapping = json.loads(raw) if isinstance(raw, str) else raw
+    mapping[tier.upper()] = role_id
+    save_guild_config_v3(guild_id, {'tier_roles': json.dumps(mapping)})
+
+def unset_tier_role(guild_id: int, tier: str):
+    import json
+    cfg = get_guild_config_v3(guild_id) or {}
+    raw = cfg.get('tier_roles') or '{}'
+    mapping = json.loads(raw) if isinstance(raw, str) else raw
+    mapping.pop(tier.upper(), None)
+    save_guild_config_v3(guild_id, {'tier_roles': json.dumps(mapping)})
+
+def get_tier_roles(guild_id: int) -> dict:
+    import json
+    cfg = get_guild_config_v3(guild_id)
+    if not cfg or not cfg.get('tier_roles'):
+        return {}
+    raw = cfg['tier_roles']
+    return json.loads(raw) if isinstance(raw, str) else raw
 
 # =====================================================================
 # V3: TIER TICKET DISPLAY
