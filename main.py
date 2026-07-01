@@ -685,7 +685,7 @@ class TournamentGroup(app_commands.Group):
             chan = guild.get_channel(config_v3['tier_channel_id'])
             if chan:
                 await chan.purge(limit=10)
-                embed = embeds.tier_test_hub_embed()
+                embed = embeds.tier_test_hub_embed(interaction.client.user.display_avatar.url if interaction.client.user else None)
                 msg = await chan.send(embed=embed, view=views.TierGamemodeSelect())
                 update = {"tier_message_id": str(msg.id)}
                 if config_v3.get('tier_queue_channel_id'):

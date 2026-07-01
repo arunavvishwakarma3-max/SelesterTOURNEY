@@ -229,12 +229,13 @@ COLOR_TIER = 0x9B59B6
 COLOR_TICKET = 0x3498DB
 COLOR_RESULT = 0x2ECC71
 
-def tier_test_hub_embed() -> discord.Embed:
+def tier_test_hub_embed(bot_avatar_url: str = None) -> discord.Embed:
     embed = discord.Embed(
         title="🎯 Tier Test Portal",
         description="Select a gamemode below to get your skills officially ranked.",
         color=COLOR_TIER
     )
+    embed.set_thumbnail(url=bot_avatar_url or "https://i.imgur.com/g8o468o.png")
     embed.add_field(
         name="📋 Rules",
         value=(
@@ -250,7 +251,6 @@ def tier_test_hub_embed() -> discord.Embed:
         value="🌌 Skywars  ⚔️ BUHC  🔥 FUHC\n🥊 Boxing  ⚡ Midfight  🛏️ Bedfight",
         inline=False
     )
-    embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
     embed.set_footer(text="Celestia • Tier System")
     return embed
 
@@ -439,12 +439,14 @@ def ranked_leaderboard_embed(entries: list, gamemode: str = None) -> discord.Emb
 COLOR_WELCOME = 0x1ABC9C
 
 def welcome_embed(member: discord.Member, member_count: int) -> discord.Embed:
+    bot_avatar = member.guild.me.display_avatar.url if member.guild.me else None
     embed = discord.Embed(
         title="🌟 Welcome!",
         description=f"{member.mention} joined **{member.guild.name}** — Member **#{member_count}**",
         color=COLOR_WELCOME
     )
     embed.set_thumbnail(url=member.display_avatar.url)
+    embed.set_image(url=bot_avatar)
     embed.add_field(
         name="📋 Getting Started",
         value=(
@@ -460,7 +462,6 @@ def welcome_embed(member: discord.Member, member_count: int) -> discord.Embed:
         value=f"Joined: <t:{int(member.joined_at.timestamp())}:R>",
         inline=False
     )
-    embed.set_image(url="https://i.imgur.com/f04T8Yn.gif")
     embed.set_footer(text=f"Celestia • Member #{member_count}")
     return embed
 

@@ -53,7 +53,7 @@ class TierGroup(app_commands.Group):
         if tester_role:
             data["tier_tester_role_id"] = tester_role.id
 
-        embed = embeds.tier_test_hub_embed()
+        embed = embeds.tier_test_hub_embed(interaction.client.user.display_avatar.url if interaction.client.user else None)
         view = views.TierGamemodeSelect()
         msg = await tier_channel.send(embed=embed, view=view)
         data["tier_message_id"] = str(msg.id)
