@@ -233,12 +233,10 @@ async def start_application(interaction: discord.Interaction, app_type: str):
         return
 
     welcome = discord.Embed(
-        title=f"{app_info['emoji']} {app_info['name']} Application",
+        title=f"{app_info['name']} Application",
         description=(
-            f"Welcome {interaction.user.mention}!\n\n"
-            f"You are applying for **{app_info['name']}**.\n"
-            "Answer each question by typing your response.\n\n"
-            "**Be honest and take your time.**"
+            f"Welcome {interaction.user.mention}\n\n"
+            "Answer each question by typing your response."
         ),
         color=app_info['color']
     )
