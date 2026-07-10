@@ -744,3 +744,63 @@ class ApplyPanelGroup(app_commands.Group):
             embed=discord.Embed(title="Setup Removed", description=desc, color=0x00E676),
             ephemeral=True
         )
+
+    @app_commands.command(name="clear", description="Clear a user's pending application.")
+    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.describe(user="User whose application to clear")
+    async def clear(self, interaction: discord.Interaction, user: discord.Member):
+        await interaction.response.defer(ephemeral=True)
+
+        pending = database.get_pending_staff_application(interaction.guild_id, user.id)
+        if not pending:
+            await interaction.followup.send(
+                embed=discord.Embed(title="Nothing Found", description=f"{user.mention} has no pending applications.", color=0x7289DA),
+                ephemeral=True
+            )
+            return
+
+        database.delete_staff_application(pending['id'])
+
+        if pending.get('message_id') and pending.get('channel_id'):
+            ch = interaction.guild.get_channel(pending['channel_id'])
+            if ch:
+                try:
+                    msg = await ch.fetch_message(pending['message_id'])
+                    await msg.delete()
+                except Exception:
+                    pass
+
+        await interaction.followup.send(
+            embed=discord.Embed(title="Cleared", description=f"Cleared pending application #{pending['id']} for {user.mention}.", color=0x00E676),
+            ephemeral=True
+        )
+
+    @app_commands.command(name="clearall", description="Clear ALL pending applications.")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def clearall(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+
+        apps = database.get_staff_applications(interaction.guild_id, status='pending')
+        if not apps:
+            await interaction.followup.send(
+                embed=discord.Embed(title="Nothing Found", description="No pending applications.", color=0x7289DA),
+                ephemeral=True
+            )
+            return
+
+        count = len(apps)
+        for app in apps:
+            database.delete_staff_application(app['id'])
+            if app.get('message_id') and app.get('channel_id'):
+                ch = interaction.guild.get_channel(app['channel_id'])
+                if ch:
+                    try:
+                        msg = await ch.fetch_message(app['message_id'])
+                        await msg.delete()
+                    except Exception:
+                        pass
+
+        await interaction.followup.send(
+            embed=discord.Embed(title="All Cleared", description=f"Removed **{count}** pending applications.", color=0x00E676),
+            ephemeral=True
+        )
