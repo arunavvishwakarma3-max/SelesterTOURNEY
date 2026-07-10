@@ -22,6 +22,7 @@ import staff_application
 import autorole_system
 import comp_system
 import help_system
+import application_panel
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -54,6 +55,7 @@ class TournamentBot(commands.Bot):
         self.tree.add_command(staff_application.ApplyGroup())
         self.tree.add_command(autorole_system.AutoroleGroup())
         self.tree.add_command(comp_system.CompGroup())
+        self.tree.add_command(application_panel.ApplyPanelGroup())
         help_cmd = app_commands.Command(
             name="help",
             description="Show every bot command (Admin/Owner only)",
@@ -107,6 +109,7 @@ class TournamentBot(commands.Bot):
         self.add_view(views.RankedGamemodeSelect())
         self.add_view(ticket_system.TicketPanelView())
         self.add_view(comp_system.CompPanelView())
+        self.add_view(application_panel.ApplicationPanelView())
         print("Persistent views restored.")
 
     async def on_member_join(self, member: discord.Member):
@@ -116,6 +119,12 @@ class TournamentBot(commands.Bot):
     async def on_message(self, message: discord.Message):
         if message.author.bot:
             return
+
+        # Handle application panel Q&A flow
+        handled = await application_panel.handle_application_message(message)
+        if handled:
+            return
+
         if self.user in message.mentions:
             embed = discord.Embed(
                 title="👋 HEY THERE!",

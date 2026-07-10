@@ -385,6 +385,39 @@ def init_db():
         )
         """)
 
+        # 22. Staff Applications
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS staff_applications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            guild_id INTEGER,
+            user_id INTEGER,
+            ign TEXT NOT NULL,
+            age TEXT NOT NULL,
+            why TEXT NOT NULL,
+            experience TEXT NOT NULL,
+            hours TEXT NOT NULL,
+            status TEXT DEFAULT 'pending',
+            message_id INTEGER,
+            reviewed_by INTEGER,
+            review_note TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            reviewed_at TIMESTAMP
+        )
+        """)
+
+        for col in ['application_type TEXT DEFAULT "staff"', 'application_data TEXT DEFAULT ""', 'channel_id INTEGER']:
+            try:
+                cursor.execute(f"ALTER TABLE staff_applications ADD COLUMN {col}")
+            except sqlite3.OperationalError:
+                pass
+
+        # Add staff_apps_role_id to guild_config_v3 if missing
+        for col in ['staff_apps_role_id', 'application_panel_channel_id', 'application_review_channel_id']:
+            try:
+                cursor.execute(f"ALTER TABLE guild_config_v3 ADD COLUMN {col} INTEGER")
+            except sqlite3.OperationalError:
+                pass
+
         conn.commit()
 
 # =====================================================================
@@ -1230,3 +1263,73 @@ def get_pending_comp_match_for_user(user_id: int, guild_id: int):
             (guild_id, user_id)
         ).fetchone()
         return dict(row) if row else None
+
+# =====================================================================
+# V3: STAFF APPLICATIONS
+# =====================================================================
+
+def create_staff_application(guild_id: int, user_id: int, ign: str, age: str, why: str, experience: str, hours: str):
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO staff_applications (guild_id, user_id, ign, age, why, experience, hours)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (guild_id, user_id, ign, age, why, experience, hours))
+        conn.commit()
+        return cursor.lastrowid
+
+def get_staff_application(app_id: int):
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM staff_applications WHERE id = ?", (app_id,)).fetchone()
+        return dict(row) if row else None
+
+def get_pending_staff_application(guild_id: int, user_id: int):
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT * FROM staff_applications WHERE guild_id = ? AND user_id = ? AND status = 'pending' ORDER BY id DESC LIMIT 1",
+            (guild_id, user_id)
+        ).fetchone()
+        return dict(row) if row else None
+
+def get_staff_applications(guild_id: int, status: str = None, limit: int = 20):
+    with get_db() as conn:
+        if status:
+            rows = conn.execute(
+                "SELECT * FROM staff_applications WHERE guild_id = ? AND status = ? ORDER BY id DESC LIMIT ?",
+                (guild_id, status, limit)
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM staff_applications WHERE guild_id = ? ORDER BY id DESC LIMIT ?",
+                (guild_id, limit)
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+def update_staff_application_status(app_id: int, status: str, reviewed_by: int = None, review_note: str = ''):
+    with get_db() as conn:
+        import datetime
+        conn.execute(
+            "UPDATE staff_applications SET status = ?, reviewed_by = ?, review_note = ?, reviewed_at = ? WHERE id = ?",
+            (status, reviewed_by, review_note, datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"), app_id)
+        )
+        conn.commit()
+
+def set_staff_application_message(app_id: int, message_id: int):
+    with get_db() as conn:
+        conn.execute("UPDATE staff_applications SET message_id = ? WHERE id = ?", (message_id, app_id))
+        conn.commit()
+
+def update_staff_application_type(app_id: int, app_type: str):
+    with get_db() as conn:
+        conn.execute("UPDATE staff_applications SET application_type = ? WHERE id = ?", (app_type, app_id))
+        conn.commit()
+
+def update_staff_application_data(app_id: int, data: str):
+    with get_db() as conn:
+        conn.execute("UPDATE staff_applications SET application_data = ? WHERE id = ?", (data, app_id))
+        conn.commit()
+
+def set_staff_application_channel(app_id: int, channel_id: int):
+    with get_db() as conn:
+        conn.execute("UPDATE staff_applications SET channel_id = ? WHERE id = ?", (channel_id, app_id))
+        conn.commit()

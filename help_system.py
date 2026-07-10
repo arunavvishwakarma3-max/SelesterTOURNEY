@@ -94,7 +94,13 @@ async def help_callback(interaction: discord.Interaction):
 
     embed.add_field(
         name="📋 Applications `/apply`",
-        value="`staff` — Submit staff application\n`staffsetup` — Auto-create apps channel",
+        value="`staff` — Submit staff application\n`staffsetup` — Configure apps channel\n`accept` `reject` — Review applications\n`list` — View all applications\n`status` — Check your application",
+        inline=False
+    )
+
+    embed.add_field(
+        name="📋 Application Panel `/app`",
+        value="`panel` — Post application panel\n`reviewchannel` — Set review channel\n`accept` `reject` — Review applications\n`list` `status` — View applications",
         inline=False
     )
 

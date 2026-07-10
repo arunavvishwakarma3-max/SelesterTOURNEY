@@ -585,3 +585,121 @@ def tier_gamemode_queue_embed(guild: discord.Guild, gamemode: str) -> discord.Em
 
     embed.set_footer(text="Celestia • Tier Queue")
     return embed
+
+# =====================================================================
+# STAFF APPLICATION EMBEDS
+# =====================================================================
+
+def staff_application_embed(app: dict, member: discord.Member) -> discord.Embed:
+    embed = discord.Embed(
+        title=f"Staff Application #{app['id']}",
+        description=(
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "A new staff application has been submitted.\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        ),
+        color=0x9B59B6
+    )
+    embed.set_thumbnail(url=member.display_avatar.url)
+    embed.add_field(name="Applicant", value=f"{member.mention} (`{member.id}`)", inline=False)
+    embed.add_field(name="IGN", value=f"```{app['ign']}```", inline=True)
+    embed.add_field(name="Age", value=f"```{app['age']}```", inline=True)
+    embed.add_field(name="Hours/Day", value=f"```{app['hours']}```", inline=True)
+    embed.add_field(name="Why Staff?", value=f"```{app['why']}```", inline=False)
+    embed.add_field(name="Experience", value=f"```{app['experience']}```", inline=False)
+    embed.add_field(
+        name="Status",
+        value="```css\n[ Pending Review ]\n```",
+        inline=False
+    )
+    embed.set_footer(text=f"ID: {app['id']} • Celestia • Staff Applications")
+    embed.timestamp = discord.utils.utcnow()
+    return embed
+
+
+def staff_application_reviewed_embed(app: dict, status: str, reviewer: discord.Member, note: str = '') -> discord.Embed:
+    is_accepted = status == 'accepted'
+    color = 0x00E676 if is_accepted else 0xFF1744
+    status_label = "ACCEPTED" if is_accepted else "REJECTED"
+
+    embed = discord.Embed(
+        title=f"Staff Application #{app['id']} — {status_label}",
+        description=(
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"This application has been **{status_label}**.\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        ),
+        color=color
+    )
+    embed.add_field(name="Applicant", value=f"<@{app['user_id']}>", inline=True)
+    embed.add_field(name="Reviewed By", value=f"{reviewer.mention}", inline=True)
+    embed.add_field(name="IGN", value=f"```{app['ign']}```", inline=True)
+    embed.add_field(name="Age", value=f"```{app['age']}```", inline=True)
+    embed.add_field(name="Hours/Day", value=f"```{app['hours']}```", inline=True)
+    embed.add_field(name="Why Staff?", value=f"```{app['why']}```", inline=False)
+    embed.add_field(name="Experience", value=f"```{app['experience']}```", inline=False)
+    if note:
+        embed.add_field(name="Note", value=note, inline=False)
+    embed.set_footer(text=f"ID: {app['id']} • Celestia • Staff Applications")
+    embed.timestamp = discord.utils.utcnow()
+    return embed
+
+
+# =====================================================================
+# APPLICATION PANEL EMBEDS
+# =====================================================================
+
+def application_panel_embed() -> discord.Embed:
+    embed = discord.Embed(
+        title="Celestia Applications",
+        description=(
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "Apply to join the Celestia staff team!\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            "Click a button below to start your application.\n"
+            "Each application is reviewed by our admin team.\n\n"
+            "**Guidelines**\n"
+            "• Be honest and detailed in your answers\n"
+            "• Only one active application at a time\n"
+            "• Wait 7 days before reapplying after rejection\n"
+            "• Staff decisions are final\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        ),
+        color=0x9B59B6
+    )
+    embed.set_thumbnail(url="https://i.imgur.com/g8o468o.png")
+    embed.add_field(name="🛡️ Helper", value="Help new players and maintain order.", inline=True)
+    embed.add_field(name="⚡ Admin", value="Full admin powers to manage staff and server.", inline=True)
+    embed.add_field(name="🎯 Tier Tester", value="Evaluate player skills and assign tiers.", inline=True)
+    embed.add_field(name="🚨 Staff Report", value="Report a staff member for misconduct.", inline=True)
+    embed.set_footer(text="Celestia • Applications")
+    return embed
+
+
+def staff_application_review_embed(app_id: int, app_type: str, member: discord.Member, answers: dict) -> discord.Embed:
+    from application_panel import APP_TYPES
+    app_info = APP_TYPES.get(app_type, {"name": "Staff", "emoji": "📋", "color": 0x9B59B6})
+
+    embed = discord.Embed(
+        title=f"{app_info['emoji']} {app_info['name']} Application — #{app_id}",
+        description=(
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "A new application has been submitted for review.\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        ),
+        color=app_info['color']
+    )
+
+    if member:
+        embed.set_thumbnail(url=member.display_avatar.url)
+        embed.add_field(name="Applicant", value=f"{member.mention} (`{member.id}`)", inline=True)
+
+    embed.add_field(name="Type", value=f"{app_info['emoji']} {app_info['name']}", inline=True)
+
+    for key, value in answers.items():
+        embed.add_field(name=key, value=f"```{value}```", inline=False)
+
+    embed.add_field(name="Status", value="```css\n[ Pending Review ]\n```", inline=False)
+    embed.set_footer(text=f"ID: {app_id} • Celestia • Applications")
+    embed.timestamp = discord.utils.utcnow()
+    return embed
