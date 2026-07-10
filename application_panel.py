@@ -344,9 +344,18 @@ async def _complete_application(state):
     if review_channel_id:
         review_channel = state.thread.guild.get_channel(review_channel_id)
         if review_channel:
-            view = ApplicationReviewView(app_id)
-            msg = await review_channel.send(embed=review_embed, view=view)
-            database.set_staff_application_message(app_id, msg.id)
+            try:
+                view = ApplicationReviewView(app_id)
+                msg = await review_channel.send(embed=review_embed, view=view)
+                database.set_staff_application_message(app_id, msg.id)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                print(f"[APP PANEL] Failed to send review to channel {review_channel_id}: {e}")
+        else:
+            print(f"[APP PANEL] Review channel {review_channel_id} not found in guild {state.guild_id}")
+    else:
+        print(f"[APP PANEL] No review channel configured for guild {state.guild_id}")
 
     await state.thread.send(
         embed=discord.Embed(
