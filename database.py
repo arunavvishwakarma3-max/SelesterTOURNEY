@@ -1333,3 +1333,8 @@ def set_staff_application_channel(app_id: int, channel_id: int):
     with get_db() as conn:
         conn.execute("UPDATE staff_applications SET channel_id = ? WHERE id = ?", (channel_id, app_id))
         conn.commit()
+
+def delete_staff_application(app_id: int):
+    with get_db() as conn:
+        conn.execute("DELETE FROM staff_applications WHERE id = ?", (app_id,))
+        conn.commit()

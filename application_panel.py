@@ -630,3 +630,71 @@ class ApplyPanelGroup(app_commands.Group):
             embed.add_field(name=f"#{app['id']}", value=val, inline=False)
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @app_commands.command(name="remove", description="Remove an application.")
+    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.describe(application_id="Application ID to remove")
+    async def remove(self, interaction: discord.Interaction, application_id: int):
+        await interaction.response.defer(ephemeral=True)
+
+        app_data = database.get_staff_application(application_id)
+        if not app_data:
+            await interaction.followup.send("Application not found.", ephemeral=True)
+            return
+        if app_data['guild_id'] != interaction.guild.id:
+            await interaction.followup.send("Wrong server.", ephemeral=True)
+            return
+
+        if app_data.get('message_id') and app_data.get('channel_id'):
+            ch = interaction.guild.get_channel(app_data['channel_id'])
+            if ch:
+                try:
+                    msg = await ch.fetch_message(app_data['message_id'])
+                    await msg.delete()
+                except Exception:
+                    pass
+
+        database.delete_staff_application(application_id)
+
+        member = interaction.guild.get_member(app_data['user_id'])
+        if member:
+            try:
+                await member.send(
+                    embed=discord.Embed(
+                        title="Application Removed",
+                        description=f"Your application #{application_id} in **{interaction.guild.name}** has been removed by staff.",
+                        color=0xFF9F00
+                    )
+                )
+            except discord.Forbidden:
+                pass
+
+        await interaction.followup.send(f"Application #{application_id} removed.", ephemeral=True)
+
+    @app_commands.command(name="cancel", description="Cancel your own pending application.")
+    async def cancel(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+
+        pending = database.get_pending_staff_application(interaction.guild_id, interaction.user.id)
+        if not pending:
+            await interaction.followup.send(
+                embed=discord.Embed(title="Nothing to Cancel", description="You have no pending applications.", color=0x7289DA),
+                ephemeral=True
+            )
+            return
+
+        if pending.get('message_id') and pending.get('channel_id'):
+            ch = interaction.guild.get_channel(pending['channel_id'])
+            if ch:
+                try:
+                    msg = await ch.fetch_message(pending['message_id'])
+                    await msg.delete()
+                except Exception:
+                    pass
+
+        database.delete_staff_application(pending['id'])
+
+        await interaction.followup.send(
+            embed=discord.Embed(title="Application Cancelled", description=f"Your application #{pending['id']} has been removed.", color=0x00E676),
+            ephemeral=True
+        )
