@@ -698,3 +698,49 @@ class ApplyPanelGroup(app_commands.Group):
             embed=discord.Embed(title="Application Cancelled", description=f"Your application #{pending['id']} has been removed.", color=0x00E676),
             ephemeral=True
         )
+
+    @app_commands.command(name="removesetup", description="Remove the application panel setup completely.")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def removesetup(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
+
+        cfg = database.get_guild_config_v3(interaction.guild_id)
+        if not cfg:
+            await interaction.followup.send(
+                embed=discord.Embed(title="Nothing to Remove", description="No application setup found.", color=0x7289DA),
+                ephemeral=True
+            )
+            return
+
+        removed = []
+
+        panel_channel_id = cfg.get('application_panel_channel_id')
+        if panel_channel_id:
+            ch = interaction.guild.get_channel(panel_channel_id)
+            if ch:
+                try:
+                    async for msg in ch.history(limit=10):
+                        if msg.author == interaction.guild.me and msg.embeds:
+                            if "Applications" in (msg.embeds[0].title or ""):
+                                await msg.delete()
+                                removed.append("Panel message")
+                                break
+                except Exception:
+                    pass
+
+        review_channel_id = cfg.get('application_review_channel_id')
+        if review_channel_id:
+            removed.append(f"Review channel config")
+
+        cfg['application_panel_channel_id'] = None
+        cfg['application_review_channel_id'] = None
+        database.save_guild_config_v3(interaction.guild_id, cfg)
+
+        desc = "Application setup has been removed." if removed else "Config cleared."
+        if removed:
+            desc += "\n\nRemoved: " + ", ".join(removed)
+
+        await interaction.followup.send(
+            embed=discord.Embed(title="Setup Removed", description=desc, color=0x00E676),
+            ephemeral=True
+        )
